@@ -10,7 +10,7 @@ import com.facebook.react.bridge.ReactMethod
 class DeviceInfoModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String = "DeviceInfo"
+    override fun getName(): String = "AppDeviceInfo"
 
     // getConstants() is called once at module init time.
     // Values are pushed into the JS module object immediately — JS reads them

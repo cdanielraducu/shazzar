@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import DeviceInfo from '@/modules/DeviceInfo';
+import Health from '@/modules/Health';
 
 function App(): JSX.Element {
   const [model, setModel] = useState<string>('');
   const [osVersion, setOsVersion] = useState<string>('');
   const [battery, setBattery] = useState<number | null>(null);
+  const [healthAvailable, setHealthAvailable] = useState<string>('...');
 
   useEffect(() => {
     // Constants — already resolved at module init, no bridge call
@@ -16,6 +18,14 @@ function App(): JSX.Element {
     DeviceInfo.getBatteryLevel()
       .then(level => setBattery(Math.round(level * 100)))
       .catch(err => console.error('Battery error:', err));
+
+    // Health Connect availability check
+    Health.isAvailable()
+      .then(available => setHealthAvailable(available ? 'Yes' : 'No'))
+      .catch(err => {
+        console.error('Health error:', err);
+        setHealthAvailable('Error');
+      });
   }, []);
 
   return (
@@ -27,7 +37,14 @@ function App(): JSX.Element {
         <View style={styles.card}>
           <Row label="Model" value={model} />
           <Row label="Android" value={osVersion} />
-          <Row label="Battery" value={battery !== null ? `${battery}%` : '...'} />
+          <Row
+            label="Battery"
+            value={battery !== null ? `${battery}%` : '...'}
+          />
+        </View>
+
+        <View style={[styles.card, {marginTop: 16}]}>
+          <Row label="Health Connect" value={healthAvailable} />
         </View>
       </View>
     </SafeAreaView>

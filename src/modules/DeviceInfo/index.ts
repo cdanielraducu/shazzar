@@ -1,7 +1,7 @@
 import {NativeModules, Platform} from 'react-native';
 
-// The string here must match getName() in DeviceInfoModule.kt
-const {DeviceInfo: NativeDeviceInfo} = NativeModules;
+// The string here must match getName() in DeviceInfoModule.kt / DeviceInfoModule.swift
+const {AppDeviceInfo: NativeDeviceInfo} = NativeModules;
 
 if (!NativeDeviceInfo) {
   throw new Error(

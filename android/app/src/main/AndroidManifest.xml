@@ -1,6 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Health Connect — step count read access -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+
+    <!-- Health Connect library requires minSdk 26 but our app targets 21.
+         We handle the API level check at runtime in HealthModule.kt —
+         isAvailable() returns false on API < 26, all other methods reject early. -->
+    <uses-sdk tools:overrideLibrary="androidx.health.connect.client" />
+
+    <!-- Needed so PackageManager can resolve Health Connect -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <application
       android:name=".MainApplication"

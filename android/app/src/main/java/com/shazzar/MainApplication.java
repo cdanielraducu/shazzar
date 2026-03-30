@@ -10,6 +10,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import com.shazzar.modules.deviceinfo.DeviceInfoPackage;
 import com.shazzar.modules.haptics.HapticsPackage;
+import com.shazzar.modules.health.HealthPackage;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           packages.add(new DeviceInfoPackage());
           packages.add(new HapticsPackage());
+          packages.add(new HealthPackage());
           return packages;
         }
 

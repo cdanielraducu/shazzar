@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-// @objc(DeviceInfo) exposes this class to Objective-C with the name "DeviceInfo"
+// @objc(AppDeviceInfo) exposes this class to Objective-C with the name "AppDeviceInfo"
 // This name must match the first argument in RCT_EXTERN_MODULE in the .m file
-@objc(DeviceInfo)
+@objc(AppDeviceInfo)
 class DeviceInfoModule: NSObject {
 
   // constantsToExport is called once at bridge init — same concept as getConstants() on Android
