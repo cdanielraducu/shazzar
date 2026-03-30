@@ -1,13 +1,13 @@
 #import <React/RCTBridgeModule.h>
 
-// RCT_EXTERN_MODULE tells RN's ObjC bridge that a module named "DeviceInfo" exists
-// and that it is implemented by the Swift class DeviceInfoModule (from the .swift file)
-// Without this file, RN has no idea the Swift class exists
-RCT_EXTERN_MODULE(DeviceInfo, NSObject)
+// RCT_EXTERN_MODULE is used as an @interface declaration — not a standalone call.
+// It tells RN's ObjC bridge that "DeviceInfo" is implemented by the Swift class DeviceInfoModule.
+// RCT_EXTERN_METHOD registers each bridged method inside the @interface/@end block.
+@interface RCT_EXTERN_MODULE(DeviceInfo, NSObject)
 
-// RCT_EXTERN_METHOD registers each bridged method — parameter labels must exactly
-// match the Swift method signature
 RCT_EXTERN_METHOD(
   getBatteryLevel:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )
+
+@end

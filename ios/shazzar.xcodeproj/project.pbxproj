@@ -12,6 +12,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */; };
+		5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */; };
 		6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-shazzar-shazzarTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-shazzar-shazzarTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -40,6 +42,9 @@
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-shazzar-shazzarTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shazzar-shazzarTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-shazzar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.debug.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-shazzar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.release.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.release.xcconfig"; sourceTree = "<group>"; };
+		5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DeviceInfoModule.m; path = shazzar/modules/DeviceInfo/DeviceInfoModule.m; sourceTree = "<group>"; };
+		5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceInfoModule.swift; path = shazzar/modules/DeviceInfo/DeviceInfoModule.swift; sourceTree = "<group>"; };
+		5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "shazzar-Bridging-Header.h"; path = "shazzar/shazzar-Bridging-Header.h"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-shazzar-shazzarTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar-shazzarTests.debug.xcconfig"; path = "Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-shazzar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shazzar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = shazzar/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -88,6 +93,9 @@
 		13B07FAE1A68108700A75B9A /* shazzar */ = {
 			isa = PBXGroup;
 			children = (
+				5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */,
+				5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */,
+				5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -210,7 +218,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 2620;
 					};
 				};
 			};
@@ -416,6 +424,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */,
+				5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -504,6 +514,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = shazzar;
+				SWIFT_OBJC_BRIDGING_HEADER = "shazzar/shazzar-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -530,6 +541,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = shazzar;
+				SWIFT_OBJC_BRIDGING_HEADER = "shazzar/shazzar-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -610,6 +622,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "shazzar/shazzar-Bridging-Header.h";
 			};
 			name = Debug;
 		};
@@ -683,6 +696,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "shazzar/shazzar-Bridging-Header.h";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
