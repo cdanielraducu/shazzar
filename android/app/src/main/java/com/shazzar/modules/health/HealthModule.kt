@@ -1,6 +1,7 @@
 package com.shazzar.modules.health
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import androidx.health.connect.client.HealthConnectClient
@@ -105,6 +106,30 @@ class HealthModule(reactContext: ReactApplicationContext) :
         try {
             val intent = contract.createIntent(reactApplicationContext, permissions)
             activity.startActivityForResult(intent, REQUEST_CODE)
+        } catch (e: ActivityNotFoundException) {
+            // On API 34+ Health Connect is a system module with a different intent
+            // action than what the standalone app uses. The library contract may
+            // target the wrong package. Fall back to checking granted permissions
+            // directly — if the user has already granted via Settings, we're fine.
+            permissionPromise = null
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val client = HealthConnectClient.getOrCreate(reactApplicationContext)
+                    val granted = client.permissionController.getGrantedPermissions()
+                    if (granted.containsAll(permissions)) {
+                        promise.resolve(true)
+                    } else {
+                        promise.reject(
+                            "HEALTH_ERROR",
+                            "Health Connect permissions UI not available. " +
+                                "Grant step count access in Settings > Health Connect.",
+                            e
+                        )
+                    }
+                } catch (ex: Exception) {
+                    promise.reject("HEALTH_ERROR", "Health Connect not available: ${ex.message}", ex)
+                }
+            }
         } catch (e: Exception) {
             permissionPromise = null
             promise.reject("HEALTH_ERROR", "Failed to launch permission request: ${e.message}", e)

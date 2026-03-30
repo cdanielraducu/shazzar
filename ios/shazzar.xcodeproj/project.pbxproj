@@ -12,11 +12,14 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C4F29B96158642702B19 /* HealthModule.swift */; };
 		5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */; };
 		5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */; };
 		6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-shazzar-shazzarTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-shazzar-shazzarTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		BF91F87EF7F8D858F998A694 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA50596FC5F073E32CA1198 /* HealthKit.framework */; };
+		DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E117F68DF0B936C8C8D2627 /* HealthModule.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +53,9 @@
 		6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = shazzar/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = shazzar/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-shazzar-shazzarTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar-shazzarTests.release.xcconfig"; path = "Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests.release.xcconfig"; sourceTree = "<group>"; };
+		9E117F68DF0B936C8C8D2627 /* HealthModule.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = HealthModule.m; path = shazzar/modules/Health/HealthModule.m; sourceTree = "<group>"; };
+		A9B8C4F29B96158642702B19 /* HealthModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HealthModule.swift; path = shazzar/modules/Health/HealthModule.swift; sourceTree = "<group>"; };
+		CDA50596FC5F073E32CA1198 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HealthKit.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -67,6 +73,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-shazzar.a in Frameworks */,
+				BF91F87EF7F8D858F998A694 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +109,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A9B8C4F29B96158642702B19 /* HealthModule.swift */,
+				9E117F68DF0B936C8C8D2627 /* HealthModule.m */,
 			);
 			name = shazzar;
 			sourceTree = "<group>";
@@ -112,6 +121,7 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-shazzar.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-shazzar-shazzarTests.a */,
+				CDA50596FC5F073E32CA1198 /* HealthKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -428,6 +438,8 @@
 				5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */,
+				DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +511,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = shazzar/shazzar.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = shazzar/Info.plist;
@@ -527,6 +540,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = shazzar/shazzar.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = shazzar/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

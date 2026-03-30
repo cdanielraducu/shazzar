@@ -14,7 +14,7 @@ if (!NativeHealth) {
 export interface HealthType {
   isAvailable(): Promise<boolean>;
   requestPermissions(): Promise<boolean>;
-  getSteps(startTime: string, endTime: string): Promise<number>;
+  getSteps(startTime: string, endTime: string): Promise<number | null>;
 }
 
 const Health: HealthType = {

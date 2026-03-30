@@ -35,5 +35,31 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <!-- Health Connect requires apps to declare this intent filter so the
+           system knows to list them under "App permissions". Without it,
+           Health Connect shows "No compatible apps installed".
+           On API 34+ this also enables the platform permission request flow.
+           The activity itself just needs to exist — we point it at MainActivity
+           since we handle everything in the RN bridge layer. -->
+      <activity
+        android:name=".HealthPermissionRationaleActivity"
+        android:exported="true">
+        <intent-filter>
+          <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
+      </activity>
+
+      <!-- API 34+ uses a different action name for the same purpose -->
+      <activity-alias
+        android:name="ViewPermissionUsageActivity"
+        android:exported="true"
+        android:targetActivity=".HealthPermissionRationaleActivity"
+        android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+          <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+        </intent-filter>
+      </activity-alias>
     </application>
 </manifest>
