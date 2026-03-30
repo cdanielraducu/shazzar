@@ -48,6 +48,7 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - Redux Toolkit for state management
 
 ### Phase 4 — CI/CD with Fastlane
+- Pre-commit hooks — lint, type-check, test gate (Husky + lint-staged)
 - Fastlane setup for both platforms
 - Android: full lanes (build, sign, deploy)
 - iOS: lane structure scaffolded, signing deferred (`match` needs Apple Developer account)
