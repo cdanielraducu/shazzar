@@ -13,6 +13,10 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C4F29B96158642702B19 /* HealthModule.swift */; };
+		5A3B9D152F7AF9DE008EACFB /* HapticsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */; };
+		5A3B9D162F7AF9DE008EACFB /* HapticsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */; };
+		5A3B9D192F7AF9FF008EACFB /* SQLiteModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */; };
+		5A3B9D1A2F7AF9FF008EACFB /* SQLiteModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */; };
 		5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */; };
 		5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */; };
 		6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */; };
@@ -45,6 +49,10 @@
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-shazzar-shazzarTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shazzar-shazzarTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-shazzar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.debug.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-shazzar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.release.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.release.xcconfig"; sourceTree = "<group>"; };
+		5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HapticsModule.m; path = shazzar/modules/Haptics/HapticsModule.m; sourceTree = "<group>"; };
+		5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticsModule.swift; path = shazzar/modules/Haptics/HapticsModule.swift; sourceTree = "<group>"; };
+		5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SQLiteModule.m; path = shazzar/modules/SQLite/SQLiteModule.m; sourceTree = "<group>"; };
+		5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SQLiteModule.swift; path = shazzar/modules/SQLite/SQLiteModule.swift; sourceTree = "<group>"; };
 		5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DeviceInfoModule.m; path = shazzar/modules/DeviceInfo/DeviceInfoModule.m; sourceTree = "<group>"; };
 		5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceInfoModule.swift; path = shazzar/modules/DeviceInfo/DeviceInfoModule.swift; sourceTree = "<group>"; };
 		5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "shazzar-Bridging-Header.h"; path = "shazzar/shazzar-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -100,6 +108,10 @@
 		13B07FAE1A68108700A75B9A /* shazzar */ = {
 			isa = PBXGroup;
 			children = (
+				5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */,
+				5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */,
+				5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */,
+				5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */,
 				5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */,
 				5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */,
 				5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */,
@@ -296,9 +308,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -357,9 +373,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -374,9 +394,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -391,9 +415,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar-shazzarTests/Pods-shazzar-shazzarTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -436,8 +464,12 @@
 			files = (
 				5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */,
 				5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */,
+				5A3B9D192F7AF9FF008EACFB /* SQLiteModule.swift in Sources */,
+				5A3B9D1A2F7AF9FF008EACFB /* SQLiteModule.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				5A3B9D152F7AF9DE008EACFB /* HapticsModule.m in Sources */,
+				5A3B9D162F7AF9DE008EACFB /* HapticsModule.swift in Sources */,
 				1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */,
 				DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */,
 			);
@@ -630,10 +662,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "shazzar/shazzar-Bridging-Header.h";
@@ -704,10 +733,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "shazzar/shazzar-Bridging-Header.h";

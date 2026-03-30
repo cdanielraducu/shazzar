@@ -33,14 +33,14 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - Folder structure that scales
 - Understanding `/ios` and `/android` native folders
 
-### Phase 2 — Native Modules (Old Bridge) 🟡
+### Phase 2 — Native Modules (Old Bridge) ✅
 - Write bridges from scratch using the **old architecture**
 - iOS: Swift with `RCT_EXPORT_MODULE` / `RCT_EXPORT_METHOD`
 - Android: Kotlin `ReactPackage` + `NativeModule`
 - DeviceInfo — constants + async method ✅
 - Haptics — impact, notification, selection ✅
-- HealthKit (iOS) / Health Connect (Android) — requires minimal permissions implementation
-- SQLite — raw `execute(sql, params)`, transactions (`begin / commit / rollback`)
+- HealthKit (iOS) / Health Connect (Android) — requires minimal permissions implementation ✅
+- SQLite — raw `execute(sql, params)`, transactions (`begin / commit / rollback`) ✅
 
 ### Phase 3 — Core App Scaffolding
 - `react-navigation` — tab navigator (Home, Settings) with nested stacks

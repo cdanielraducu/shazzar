@@ -11,6 +11,7 @@ import com.facebook.soloader.SoLoader;
 import com.shazzar.modules.deviceinfo.DeviceInfoPackage;
 import com.shazzar.modules.haptics.HapticsPackage;
 import com.shazzar.modules.health.HealthPackage;
+import com.shazzar.modules.sqlite.SQLitePackage;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
           packages.add(new DeviceInfoPackage());
           packages.add(new HapticsPackage());
           packages.add(new HealthPackage());
+          packages.add(new SQLitePackage());
           return packages;
         }
 
