@@ -5,6 +5,7 @@
     "paths": {
       "@/components/*": ["src/components/*"],
       "@/screens/*": ["src/screens/*"],
+      "@/navigation": ["src/navigation/index.ts"],
       "@/navigation/*": ["src/navigation/*"],
       "@/modules/*": ["src/modules/*"],
       "@/hooks/*": ["src/hooks/*"],
