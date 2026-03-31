@@ -10,6 +10,7 @@
       "@/modules/*": ["src/modules/*"],
       "@/hooks/*": ["src/hooks/*"],
       "@/services/*": ["src/services/*"],
+      "@/store": ["src/store/index.ts"],
       "@/store/*": ["src/store/*"],
       "@/utils/*": ["src/utils/*"],
       "@/types/*": ["src/types/*"],
