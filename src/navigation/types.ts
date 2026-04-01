@@ -11,6 +11,8 @@ export type TabParamList = {
 // Stack param lists per tab
 export type HomeStackParamList = {
   Home: undefined;
+  HabitDetail: {habitId: string};
+  AddEditHabit: {habitId?: string};
 };
 
 export type SettingsStackParamList = {
@@ -20,6 +22,16 @@ export type SettingsStackParamList = {
 // Composed nav prop helpers for screens
 export type HomeScreenNavigationProp = CompositeNavigationProp<
   StackNavigationProp<HomeStackParamList, 'Home'>,
+  BottomTabNavigationProp<TabParamList>
+>;
+
+export type HabitDetailNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<HomeStackParamList, 'HabitDetail'>,
+  BottomTabNavigationProp<TabParamList>
+>;
+
+export type AddEditHabitNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<HomeStackParamList, 'AddEditHabit'>,
   BottomTabNavigationProp<TabParamList>
 >;
 

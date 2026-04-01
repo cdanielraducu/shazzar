@@ -1,46 +1,20 @@
-import React, {useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  FlatList,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@/store/hooks';
-import {addHabit, toggleHabit, removeHabit, Habit} from '@/store/habitsSlice';
+import {toggleHabit, Habit} from '@/store/habitsSlice';
+import {HomeScreenNavigationProp} from '@/navigation/types';
 
 export function HomeScreen(): JSX.Element {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const dispatch = useAppDispatch();
   const habits = useAppSelector(state => state.habits.items);
-  const [input, setInput] = useState('');
-
-  const handleAdd = () => {
-    const name = input.trim();
-    if (!name) {
-      return;
-    }
-    dispatch(addHabit({name, frequency: 'daily'}));
-    setInput('');
-  };
-
-  const handleRemove = (id: string) => {
-    Alert.alert('Remove habit?', undefined, [
-      {text: 'Cancel', style: 'cancel'},
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: () => dispatch(removeHabit(id)),
-      },
-    ]);
-  };
 
   const renderItem = ({item}: {item: Habit}) => (
     <TouchableOpacity
       style={styles.item}
-      onPress={() => dispatch(toggleHabit(item.id))}
-      onLongPress={() => handleRemove(item.id)}>
+      onPress={() => navigation.navigate('HabitDetail', {habitId: item.id})}
+      onLongPress={() => dispatch(toggleHabit(item.id))}>
       <Text style={[styles.itemText, item.completedToday && styles.itemDone]}>
         {item.completedToday ? '✓ ' : '○ '}
         {item.name}
@@ -51,19 +25,11 @@ export function HomeScreen(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Habits</Text>
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="New habit..."
-          placeholderTextColor="#555"
-          value={input}
-          onChangeText={setInput}
-          onSubmitEditing={handleAdd}
-          returnKeyType="done"
-        />
-        <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-          <Text style={styles.addButtonText}>Add</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Habits</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AddEditHabit', {})}>
+          <Text style={styles.addIcon}>＋</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -71,7 +37,7 @@ export function HomeScreen(): JSX.Element {
         keyExtractor={item => item.id}
         renderItem={renderItem}
         ListEmptyComponent={
-          <Text style={styles.empty}>No habits yet. Add one above.</Text>
+          <Text style={styles.empty}>No habits yet. Tap ＋ to add one.</Text>
         }
       />
     </View>
@@ -85,37 +51,21 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 24,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: '#ffffff',
     letterSpacing: 2,
-    marginBottom: 24,
   },
-  inputRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 24,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    color: '#ffffff',
-    fontSize: 14,
-  },
-  addButton: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-  },
-  addButtonText: {
-    color: '#cccccc',
-    fontWeight: '600',
-    fontSize: 14,
+  addIcon: {
+    fontSize: 22,
+    color: '#888888',
   },
   item: {
     flexDirection: 'row',

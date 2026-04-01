@@ -39,8 +39,23 @@ const habitsSlice = createSlice({
     removeHabit(state, action: PayloadAction<string>) {
       state.items = state.items.filter(h => h.id !== action.payload);
     },
+    editHabit(
+      state,
+      action: PayloadAction<{
+        id: string;
+        name: string;
+        frequency: Habit['frequency'];
+      }>,
+    ) {
+      const habit = state.items.find(h => h.id === action.payload.id);
+      if (habit) {
+        habit.name = action.payload.name;
+        habit.frequency = action.payload.frequency;
+      }
+    },
   },
 });
 
-export const {addHabit, toggleHabit, removeHabit} = habitsSlice.actions;
+export const {addHabit, toggleHabit, removeHabit, editHabit} =
+  habitsSlice.actions;
 export default habitsSlice.reducer;

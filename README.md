@@ -42,7 +42,7 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - HealthKit (iOS) / Health Connect (Android) — requires minimal permissions implementation ✅
 - SQLite — raw `execute(sql, params)`, transactions (`begin / commit / rollback`) ✅
 
-### Phase 3 — Core App Scaffolding
+### Phase 3 — Core App Scaffolding ✅
 - `react-navigation` — tab navigator (Home, Settings) with nested stacks
 - Screens: Home/Dashboard, Habit Detail, Add/Edit Habit, Settings
 - Redux Toolkit for state management
