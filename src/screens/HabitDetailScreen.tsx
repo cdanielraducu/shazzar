@@ -14,8 +14,9 @@ export function HabitDetailScreen(): JSX.Element {
   const navigation = useNavigation<HabitDetailNavigationProp>();
   const route = useRoute<HabitDetailRouteProp>();
   const dispatch = useAppDispatch();
+  const habitId = route.params?.habitId;
   const habit = useAppSelector(state =>
-    state.habits.items.find(h => h.id === route.params.habitId),
+    state.habits.items.find(h => h.id === habitId),
   );
 
   if (!habit) {

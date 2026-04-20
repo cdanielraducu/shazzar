@@ -1,0 +1,8 @@
+app_identifier("com.shazzar")
+
+# iOS — deferred until Apple Developer account is active
+# apple_id("your@email.com")
+# team_id("XXXXXXXXXX")
+
+# Android
+package_name("com.shazzar")

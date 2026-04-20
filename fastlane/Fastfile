@@ -1,0 +1,97 @@
+default_platform(:android)
+
+# ─────────────────────────────────────────────
+# Shared
+# ─────────────────────────────────────────────
+
+lane :test do
+  sh("cd .. && yarn test --passWithNoTests")
+end
+
+# ─────────────────────────────────────────────
+# Android
+# ─────────────────────────────────────────────
+
+platform :android do
+
+  desc "Run tests only — use on PRs before a full build"
+  lane :verify do
+    test
+  end
+
+  desc "Build a signed release AAB"
+  lane :build do
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: "android/",
+      properties: {
+        "ANDROID_UPLOAD_STORE_FILE"     => ENV["ANDROID_KEYSTORE_PATH"],
+        "ANDROID_UPLOAD_STORE_PASSWORD" => ENV["ANDROID_STORE_PASSWORD"],
+        "ANDROID_UPLOAD_KEY_ALIAS"      => ENV["ANDROID_KEY_ALIAS"],
+        "ANDROID_UPLOAD_KEY_PASSWORD"   => ENV["ANDROID_KEY_PASSWORD"],
+      }
+    )
+  end
+
+  desc "Upload a pre-built AAB to Play Store (internal track)"
+  lane :deploy do |options|
+    aab_path = options[:aab] || UI.user_error!("Pass aab: e.g. aab:\"android/app/build/outputs/bundle/release/app-release.aab\"")
+    upload_to_play_store(
+      track: "internal",
+      aab: aab_path,
+      json_key: ENV["PLAY_STORE_JSON_KEY_PATH"],
+    )
+  end
+
+  desc "Test, bump, build, and deploy to Play Store (internal track)"
+  lane :ship do |options|
+    test
+    bump(version: options[:version])
+    build
+    deploy(aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH])
+  end
+
+  desc "Bump versionCode and versionName, then commit"
+  lane :bump do |options|
+    version = options[:version] || UI.user_error!("Pass version: e.g. version:\"1.1.0\"")
+    build_file = "../android/app/build.gradle"
+
+    content = File.read(build_file)
+    current_code = content.match(/versionCode\s+(\d+)/)[1].to_i
+    new_code = current_code + 1
+
+    content = content
+      .gsub(/(\bversionCode\s+)\d+/, "\\1#{new_code}")
+      .gsub(/(\bversionName\s+")[^"]*"/, "\\1#{version}\"")
+
+    File.write(build_file, content)
+    UI.success("Bumped to versionName #{version} / versionCode #{new_code}")
+
+    git_add(path: build_file)
+    git_commit(path: build_file, message: "chore: bump version to #{version} (#{new_code})")
+  end
+
+end
+
+# ─────────────────────────────────────────────
+# iOS — signing deferred (needs Apple Developer account)
+# ─────────────────────────────────────────────
+
+platform :ios do
+
+  desc "Build iOS app (unsigned — simulator only until signing is configured)"
+  lane :build do
+    UI.important("iOS signing not configured. Set up Fastlane match when Apple Developer account is active.")
+    # match(type: "appstore")
+    # build_app(scheme: "shazzar", workspace: "ios/shazzar.xcworkspace")
+  end
+
+  desc "Deploy to TestFlight (deferred)"
+  lane :deploy do
+    UI.important("iOS deploy deferred — requires Apple Developer account and match setup.")
+    # build
+    # upload_to_testflight
+  end
+
+end
