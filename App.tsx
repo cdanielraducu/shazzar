@@ -4,7 +4,7 @@ import {Provider} from 'react-redux';
 import {store} from '@/store';
 import {RootNavigator} from '@/navigation';
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>

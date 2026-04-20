@@ -7,7 +7,7 @@ import {HomeStackParamList} from './types';
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
-export function HomeStack(): JSX.Element {
+export function HomeStack(): React.JSX.Element {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={HomeScreen} />

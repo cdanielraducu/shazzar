@@ -5,7 +5,7 @@ import {SettingsStackParamList} from './types';
 
 const Stack = createStackNavigator<SettingsStackParamList>();
 
-export function SettingsStack(): JSX.Element {
+export function SettingsStack(): React.JSX.Element {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Settings" component={SettingsScreen} />

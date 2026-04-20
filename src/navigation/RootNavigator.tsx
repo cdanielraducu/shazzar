@@ -7,7 +7,7 @@ import {TabParamList} from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-export function RootNavigator(): JSX.Element {
+export function RootNavigator(): React.JSX.Element {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

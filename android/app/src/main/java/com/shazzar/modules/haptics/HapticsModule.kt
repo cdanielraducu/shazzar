@@ -1,5 +1,6 @@
 package com.shazzar.modules.haptics
 
+import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -19,12 +20,12 @@ class HapticsModule(reactContext: ReactApplicationContext) :
     private fun getVibrator(): Vibrator? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val manager = reactApplicationContext
-                .getSystemService(ReactApplicationContext.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                .getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
             manager?.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
             reactApplicationContext
-                .getSystemService(ReactApplicationContext.VIBRATOR_SERVICE) as? Vibrator
+                .getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
         }
     }
 

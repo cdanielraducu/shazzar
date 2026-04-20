@@ -16,7 +16,7 @@ import {
 
 type AddEditHabitRouteProp = RouteProp<HomeStackParamList, 'AddEditHabit'>;
 
-export function AddEditHabitScreen(): JSX.Element {
+export function AddEditHabitScreen(): React.JSX.Element {
   const navigation = useNavigation<AddEditHabitNavigationProp>();
   const route = useRoute<AddEditHabitRouteProp>();
   const dispatch = useAppDispatch();
