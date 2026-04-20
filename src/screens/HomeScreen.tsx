@@ -5,7 +5,7 @@ import {useAppDispatch, useAppSelector} from '@/store/hooks';
 import {toggleHabit, Habit} from '@/store/habitsSlice';
 import {HomeScreenNavigationProp} from '@/navigation/types';
 
-export function HomeScreen(): JSX.Element {
+export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const dispatch = useAppDispatch();
   const habits = useAppSelector(state => state.habits.items);

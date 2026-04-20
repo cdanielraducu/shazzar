@@ -1,5 +1,6 @@
 package com.shazzar.modules.deviceinfo
 
+import android.content.Context
 import android.os.BatteryManager
 import android.os.Build
 import com.facebook.react.bridge.Promise
@@ -27,7 +28,7 @@ class DeviceInfoModule(reactContext: ReactApplicationContext) :
     fun getBatteryLevel(promise: Promise) {
         try {
             val batteryManager = reactApplicationContext
-                .getSystemService(ReactApplicationContext.BATTERY_SERVICE) as BatteryManager
+                .getSystemService(Context.BATTERY_SERVICE) as BatteryManager
             val level = batteryManager
                 .getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
             promise.resolve(level / 100.0)

@@ -95,7 +95,7 @@ class HealthModule(reactContext: ReactApplicationContext) :
             return
         }
 
-        val activity = currentActivity
+        val activity = reactApplicationContext.currentActivity
         if (activity == null) {
             promise.reject("HEALTH_ERROR", "No activity available")
             return
@@ -181,7 +181,7 @@ class HealthModule(reactContext: ReactApplicationContext) :
     // Every Activity result in the app flows through here, so we filter
     // by REQUEST_CODE to only handle ours.
     override fun onActivityResult(
-        activity: Activity?,
+        activity: Activity,
         requestCode: Int,
         resultCode: Int,
         data: Intent?
@@ -208,5 +208,5 @@ class HealthModule(reactContext: ReactApplicationContext) :
     // Required by ActivityEventListener interface but unused here.
     // This fires when the app receives a new Intent while already running
     // (e.g. deep links) — not relevant for health permissions.
-    override fun onNewIntent(intent: Intent?) {}
+    override fun onNewIntent(intent: Intent) {}
 }

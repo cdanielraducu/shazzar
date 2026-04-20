@@ -47,7 +47,7 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - Screens: Home/Dashboard, Habit Detail, Add/Edit Habit, Settings
 - Redux Toolkit for state management
 
-### Phase 4 — CI/CD with Fastlane
+### Phase 4 — CI/CD with Fastlane ✅
 - Pre-commit hooks — lint, type-check, test gate (Husky + lint-staged)
 - Fastlane setup for both platforms
 - Android: full lanes (build, sign, deploy)
@@ -70,6 +70,15 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - Option B: **Nitro Modules** (Marc Rousavy / `react-native-nitro`) — JSI-based, no C++ boilerplate, faster DX
 - Compare both approaches on the same module (Haptics or HealthKit)
 - Enable new architecture flags on Android and iOS
+
+#### New Architecture — What Actually Changed
+
+The three pillars all build on **JSI (JavaScript Interface)** — a C++ layer that lets JS hold direct references to native objects without JSON serialization or a message queue.
+
+- **JSI** — removes the translation layer. JS calls native C++ objects directly. No marshalling, no async queue. Enables everything below.
+- **Fabric** — new renderer built on JSI. The shadow tree (layout model) lives in C++ and is readable by JS synchronously. This means `measure()` returns immediately, layout-driven animations don't need a round trip, and `onLayout` is accurate. Fabric did NOT exist in the old arch — it requires JSI.
+- **TurboModules** — native modules built on JSI. Lazy loaded (not all registered at startup), and can expose synchronous methods when needed.
+- **Concurrent React** — the real threading benefit. React 18/19 can pause, interrupt, and prioritize renders. This was impossible with the old bridge (FIFO queue, renders couldn't be interrupted). Concurrent React only works correctly with Fabric + JSI underneath it.
 
 ### Phase 7 — Permissions
 - Full cross-platform runtime permission flows

@@ -10,7 +10,7 @@ import {
 
 type HabitDetailRouteProp = RouteProp<HomeStackParamList, 'HabitDetail'>;
 
-export function HabitDetailScreen(): JSX.Element {
+export function HabitDetailScreen(): React.JSX.Element {
   const navigation = useNavigation<HabitDetailNavigationProp>();
   const route = useRoute<HabitDetailRouteProp>();
   const dispatch = useAppDispatch();

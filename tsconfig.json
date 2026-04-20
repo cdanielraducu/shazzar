@@ -1,6 +1,7 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
+    "types": ["jest"],
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["src/components/*"],
@@ -17,5 +18,7 @@
       "@/constants/*": ["src/constants/*"],
       "@/assets/*": ["src/assets/*"]
     }
-  }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"]
 }
