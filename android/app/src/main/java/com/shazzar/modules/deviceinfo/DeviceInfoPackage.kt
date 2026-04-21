@@ -1,19 +1,29 @@
 package com.shazzar.modules.deviceinfo
 
-import com.facebook.react.ReactPackage
+import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.uimanager.ViewManager
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 
-class DeviceInfoPackage : ReactPackage {
+class DeviceInfoPackage : BaseReactPackage() {
 
-    // Register our module so RN's bridge knows it exists
-    override fun createNativeModules(
-        reactContext: ReactApplicationContext
-    ): List<NativeModule> = listOf(DeviceInfoModule(reactContext))
+    override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+        return if (name == "AppDeviceInfo") DeviceInfoModule(reactContext) else null
+    }
 
-    // No custom views — required to implement but returns empty list
-    override fun createViewManagers(
-        reactContext: ReactApplicationContext
-    ): List<ViewManager<*, *>> = emptyList()
+    override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
+        return ReactModuleInfoProvider {
+            mapOf(
+                "AppDeviceInfo" to ReactModuleInfo(
+                    "AppDeviceInfo",
+                    "AppDeviceInfo",
+                    false,
+                    false,
+                    false,
+                    false,
+                ),
+            )
+        }
+    }
 }

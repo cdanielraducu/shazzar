@@ -8,3 +8,6 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+# Keep custom native modules — RN wires these up via reflection at runtime
+-keep class com.shazzar.modules.** { *; }

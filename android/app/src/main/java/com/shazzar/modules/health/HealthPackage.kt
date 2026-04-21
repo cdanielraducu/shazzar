@@ -1,14 +1,29 @@
 package com.shazzar.modules.health
 
-import com.facebook.react.ReactPackage
+import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.uimanager.ViewManager
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 
-class HealthPackage : ReactPackage {
-    override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
-        listOf(HealthModule(reactContext))
+class HealthPackage : BaseReactPackage() {
 
-    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
-        emptyList()
+    override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
+        return if (name == "Health") HealthModule(reactContext) else null
+    }
+
+    override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
+        return ReactModuleInfoProvider {
+            mapOf(
+                "Health" to ReactModuleInfo(
+                    "Health",
+                    "Health",
+                    false,
+                    false,
+                    false,
+                    false,
+                ),
+            )
+        }
+    }
 }

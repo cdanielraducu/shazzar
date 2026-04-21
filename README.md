@@ -57,7 +57,7 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - TODO: generate release keystore and configure signing env vars (`ANDROID_KEYSTORE_PATH`, `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) — locally in `~/.zshrc` and as GitHub Actions secrets; base64-encode keystore for CI
 - TODO: create Google Play service account, download JSON key, set `PLAY_STORE_JSON_KEY_PATH` — locally and as a GitHub Actions secret
 
-### Phase 5 — Build Optimization
+### Phase 5 — Build Optimization ✅
 - Hermes engine (understand it, not just enable it)
 - ProGuard / R8 for Android APK size
 - iOS dead code stripping, bitcode
