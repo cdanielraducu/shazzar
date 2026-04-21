@@ -7,6 +7,10 @@
     <!-- Required on Android 13+ (API 33) to show push/local notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Required to schedule exact alarms for habit reminders.
+         On API 31+ the user must grant this in Settings > Special app access > Alarms. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <!-- Health Connect — step count read access -->
     <uses-permission android:name="android.permission.health.READ_STEPS" />
 
@@ -41,6 +45,11 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <!-- Receives AlarmManager broadcasts to fire local notifications -->
+      <receiver
+        android:name=".modules.notifications.NotificationReceiver"
+        android:exported="false" />
 
       <!-- Health Connect requires apps to declare this intent filter so the
            system knows to list them under "App permissions". Without it,

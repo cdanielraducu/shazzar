@@ -4,6 +4,7 @@ import DeviceInfo from '@/modules/DeviceInfo';
 import Health from '@/modules/Health';
 import SQLite from '@/modules/SQLite';
 import {requestNotificationPermission, openAppSettings} from '@/modules/Permissions';
+import Notifications from '@/modules/Notifications';
 import {
   softDeleteHabit,
   restoreHabit,
@@ -31,6 +32,34 @@ export function SettingsScreen(): React.JSX.Element {
         }
       }}>
         <Text style={styles.buttonText}>request notifications</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.section}>LOCAL NOTIFICATIONS</Text>
+      <TouchableOpacity style={styles.button} onPress={async () => {
+        try {
+          const canSchedule = await Notifications.canScheduleExactAlarms();
+          if (!canSchedule) {
+            log('exact alarm permission missing — opening Settings');
+            await Notifications.openExactAlarmSettings();
+            return;
+          }
+          await Notifications.schedule(1, 'Shazzar', 'Time to check your habits!', 5000);
+          log('notification scheduled — fires in 5 seconds');
+        } catch (e: any) {
+          log(`error: ${e.message}`);
+        }
+      }}>
+        <Text style={styles.buttonText}>schedule (5s)</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={async () => {
+        try {
+          await Notifications.cancel(1);
+          log('notification cancelled');
+        } catch (e: any) {
+          log(`error: ${e.message}`);
+        }
+      }}>
+        <Text style={styles.buttonText}>cancel</Text>
       </TouchableOpacity>
 
       <Text style={styles.section}>DEVICE INFO</Text>
