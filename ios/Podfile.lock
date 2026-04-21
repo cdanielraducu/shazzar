@@ -3,6 +3,28 @@ PODS:
   - hermes-engine (250829098.0.10):
     - hermes-engine/Pre-built (= 250829098.0.10)
   - hermes-engine/Pre-built (250829098.0.10)
+  - op-sqlite (15.2.11):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RCTDeprecation (0.85.1)
   - RCTRequired (0.85.1)
   - RCTSwiftUI (0.85.1)
@@ -1890,6 +1912,7 @@ PODS:
 DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - "op-sqlite (from `../node_modules/@op-engineering/op-sqlite`)"
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
   - RCTSwiftUI (from `../node_modules/react-native/ReactApple/RCTSwiftUI`)
@@ -1972,6 +1995,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v250829098.0.10
+  op-sqlite:
+    :path: "../node_modules/@op-engineering/op-sqlite"
   RCTDeprecation:
     :path: "../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation"
   RCTRequired:
@@ -2124,6 +2149,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   FBLazyVector: ed7eadee1965b0b918ca9d0f2c2328f7eb3fd095
   hermes-engine: c8340829cceb3297a11dc00dafc410fa6d55812e
+  op-sqlite: 76a46b48c90f0d318495bb55beb1d1d0f472f69e
   RCTDeprecation: d69f6f20a20f669a0aa3115ab1109f28e98ae03e
   RCTRequired: 305a8212b9d90fa335b6a6a960e5212bbb434484
   RCTSwiftUI: 00bb3e8491b1368a47563ef0c8824601d9875ed3
@@ -2192,7 +2218,7 @@ SPEC CHECKSUMS:
   React-utils: aaf9b3d810f6fbc359ff6a6fb0dd6ea739f0b9f8
   React-webperformancenativemodule: 349b21612ebbbc42316cc849d1942af519eef9b1
   ReactAppDependencyProvider: 52da2413bc956c40a4de19ad32a92b87248f7ce8
-  ReactCodegen: aac672d7021359dc55fbd6d63f56192651664f09
+  ReactCodegen: 3ad4829283ddf8114fb067c914ca38c3c63d5f08
   ReactCommon: 66763e5bd1b778828ff6cb82d771b7162a5215c2
   ReactNativeDependencies: 634e10ba3c47d79acb2e8b0659228698449c043a
   RNGestureHandler: b0d1f061b2f46b3ac6355801175042095a311923
@@ -2201,4 +2227,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 59c39f180372da2ce33be121db28983176583c3a
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2

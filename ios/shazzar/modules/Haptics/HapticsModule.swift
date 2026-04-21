@@ -1,5 +1,10 @@
 import UIKit
 
+// @objc(Haptics) registers the class with RN's ObjC runtime under the name "Haptics".
+// With newArchEnabled=true, RN's backward-compat layer wraps this in a TurboModule shim
+// automatically — the module is JSI-backed without needing to conform to NativeHapticsSpec
+// manually. Conforming to NativeHapticsSpec directly would require an ObjC++ bridging layer
+// to import the codegen-generated header into Swift scope.
 @objc(Haptics)
 class HapticsModule: NSObject {
 

@@ -1,15 +1,7 @@
-import {NativeModules} from 'react-native';
-
-const {Haptics: NativeHaptics} = NativeModules;
-
-if (!NativeHaptics) {
-  throw new Error(
-    'Haptics native module is not available. ' +
-      'Make sure HapticsPackage is registered in MainApplication.java (Android) ' +
-      'and HapticsModule is added to the Xcode target (iOS), ' +
-      'then rebuild the app.',
-  );
-}
+// NativeHaptics is the codegen-generated TurboModule entry point.
+// TurboModuleRegistry.strictGet() resolves the module via JSI at runtime —
+// no JSON bridge, no NativeModules lookup table.
+import NativeHaptics from './NativeHaptics';
 
 // ImpactStyle maps to:
 //   Android → VibrationEffect amplitude (approximation)

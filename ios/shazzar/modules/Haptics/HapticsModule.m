@@ -1,9 +1,9 @@
-#import <React/RCTBridgeModule.h>
+// Swift TurboModules on iOS require ObjC++ bridging to import the codegen-generated
+// NativeHapticsSpec protocol. Instead of an ObjC++ wrapper, we use RCT_EXTERN_MODULE
+// which lets RN's new arch backward-compat layer promote this Swift module to a
+// TurboModule automatically at runtime — still JSI-backed, no manual spec conformance.
 
-// RCT_EXTERN_MODULE registers the Swift class with RN's ObjC bridge.
-// RCT_EXTERN_METHOD declares each method so the bridge knows the signature.
-// These macros must wrap an @interface/@end block — they are not standalone calls.
-// The actual implementation lives entirely in HapticsModule.swift.
+#import <React/RCTBridgeModule.h>
 
 @interface RCT_EXTERN_MODULE(Haptics, NSObject)
 

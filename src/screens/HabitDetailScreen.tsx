@@ -1,7 +1,8 @@
 import React from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '@/store/hooks';
+import Haptics from '@/modules/Haptics';
 import {toggleHabit, removeHabit} from '@/store/habitsSlice';
 import {
   HabitDetailNavigationProp,
@@ -42,7 +43,7 @@ export function HabitDetailScreen(): React.JSX.Element {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
         <Text style={styles.backText}>← Back</Text>
       </TouchableOpacity>
@@ -59,7 +60,10 @@ export function HabitDetailScreen(): React.JSX.Element {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => dispatch(toggleHabit(habit.id))}>
+        onPress={() => {
+          Haptics.impact('heavy');
+          dispatch(toggleHabit(habit.id));
+        }}>
         <Text style={styles.buttonText}>
           {habit.completedToday ? 'Mark Incomplete' : 'Mark Complete'}
         </Text>
@@ -78,7 +82,34 @@ export function HabitDetailScreen(): React.JSX.Element {
         onPress={handleDelete}>
         <Text style={[styles.buttonText, styles.dangerText]}>Delete</Text>
       </TouchableOpacity>
-    </View>
+
+      <Text style={styles.sectionLabel}>HAPTICS</Text>
+      <View style={styles.row}>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('light')}>
+          <Text style={styles.chipText}>impact light</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('medium')}>
+          <Text style={styles.chipText}>impact medium</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('heavy')}>
+          <Text style={styles.chipText}>impact heavy</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.row}>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('success')}>
+          <Text style={styles.chipText}>notif success</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('warning')}>
+          <Text style={styles.chipText}>notif warning</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('error')}>
+          <Text style={styles.chipText}>notif error</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.chip} onPress={() => Haptics.selection()}>
+        <Text style={styles.chipText}>selection</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -86,8 +117,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0a0a0a',
+  },
+  content: {
     paddingTop: 60,
     paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   back: {
     marginBottom: 32,
@@ -145,5 +179,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 40,
+  },
+  sectionLabel: {
+    color: '#444444',
+    fontSize: 10,
+    letterSpacing: 2,
+    marginTop: 32,
+    marginBottom: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  chip: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  chipText: {
+    color: '#aaaaaa',
+    fontSize: 12,
   },
 });
