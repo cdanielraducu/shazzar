@@ -35,6 +35,8 @@
 	</dict>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Shazzar reads your step count to help you track daily health habits.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Shazzar sends reminders to help you stay consistent with your habits.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>RCTNewArchEnabled</key>

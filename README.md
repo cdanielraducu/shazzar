@@ -231,7 +231,7 @@ The three pillars all build on **JSI (JavaScript Interface)** — a C++ layer th
 - **TurboModules** — native modules built on JSI. Lazy loaded (not all registered at startup), and can expose synchronous methods when needed.
 - **Concurrent React** — the real threading benefit. React 18/19 can pause, interrupt, and prioritize renders. This was impossible with the old bridge (FIFO queue, renders couldn't be interrupted). Concurrent React only works correctly with Fabric + JSI underneath it.
 
-### Phase 7 — Permissions
+### Phase 7 — Permissions ✅
 - Full cross-platform runtime permission flows
 - iOS `Info.plist` + Android `AndroidManifest.xml` config
 - Request → denied → redirect to settings flow

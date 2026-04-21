@@ -3,6 +3,7 @@ import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native
 import DeviceInfo from '@/modules/DeviceInfo';
 import Health from '@/modules/Health';
 import SQLite from '@/modules/SQLite';
+import {requestNotificationPermission, openAppSettings} from '@/modules/Permissions';
 import {
   softDeleteHabit,
   restoreHabit,
@@ -18,6 +19,19 @@ export function SettingsScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Native Module Playground</Text>
+
+      <Text style={styles.section}>PERMISSIONS</Text>
+      <TouchableOpacity style={styles.button} onPress={async () => {
+        const status = await requestNotificationPermission();
+        if (status === 'blocked') {
+          log('notifications blocked — opening Settings');
+          openAppSettings();
+        } else {
+          log(`notifications: ${status}`);
+        }
+      }}>
+        <Text style={styles.buttonText}>request notifications</Text>
+      </TouchableOpacity>
 
       <Text style={styles.section}>DEVICE INFO</Text>
       <TouchableOpacity style={styles.button} onPress={() => {
