@@ -11,11 +11,36 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import org.json.JSONObject
 
 class NotificationModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String = "Notifications"
+
+    private fun prefs() = reactApplicationContext.getSharedPreferences("shazzar_alarms", Context.MODE_PRIVATE)
+
+    @ReactMethod
+    fun getFcmToken(promise: Promise) {
+        val token = reactApplicationContext
+            .getSharedPreferences("shazzar_fcm", Context.MODE_PRIVATE)
+            .getString("token", null)
+        promise.resolve(token)
+    }
+
+    private fun saveAlarm(id: Int, title: String, body: String, triggerAtMs: Long) {
+        val alarm = JSONObject().apply {
+            put("id", id)
+            put("title", title)
+            put("body", body)
+            put("triggerAtMs", triggerAtMs)
+        }
+        prefs().edit().putString(id.toString(), alarm.toString()).apply()
+    }
+
+    private fun removeAlarm(id: Int) {
+        prefs().edit().remove(id.toString()).apply()
+    }
 
     // Returns true if the app can schedule exact alarms, false otherwise.
     // On API 31+ this is a special app access permission the user grants in Settings.
@@ -78,6 +103,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
                 pendingIntent,
             )
 
+            saveAlarm(id, title, body, triggerAtMs.toLong())
             promise.resolve(null)
         } catch (e: Exception) {
             promise.reject("NOTIFICATION_ERROR", "Failed to schedule: ${e.message}", e)
@@ -99,6 +125,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
             )
             val alarmManager = reactApplicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.cancel(pendingIntent)
+            removeAlarm(id)
             promise.resolve(null)
         } catch (e: Exception) {
             promise.reject("NOTIFICATION_ERROR", "Failed to cancel: ${e.message}", e)

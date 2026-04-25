@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "813707357818",
+    "project_id": "shazzar-25042026",
+    "storage_bucket": "shazzar-25042026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813707357818:android:da2714992528c4b17a15c3",
+        "android_client_info": {
+          "package_name": "com.shazzar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOPiAkXOwvUgxM2xKo26TvpqGs2cC2udw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

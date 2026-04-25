@@ -11,6 +11,9 @@
          On API 31+ the user must grant this in Settings > Special app access > Alarms. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <!-- Required to receive the BOOT_COMPLETED broadcast for re-registering alarms after reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!-- Health Connect — step count read access -->
     <uses-permission android:name="android.permission.health.READ_STEPS" />
 
@@ -50,6 +53,24 @@
       <receiver
         android:name=".modules.notifications.NotificationReceiver"
         android:exported="false" />
+
+      <!-- Re-registers AlarmManager alarms after device reboot -->
+      <receiver
+        android:name=".modules.notifications.BootReceiver"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="android.intent.action.BOOT_COMPLETED" />
+        </intent-filter>
+      </receiver>
+
+      <!-- Receives FCM tokens and messages directly from the Firebase SDK -->
+      <service
+        android:name=".modules.notifications.ShazzarFirebaseMessagingService"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
 
       <!-- Health Connect requires apps to declare this intent filter so the
            system knows to list them under "App permissions". Without it,

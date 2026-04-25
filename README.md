@@ -242,6 +242,31 @@ The three pillars all build on **JSI (JavaScript Interface)** — a C++ layer th
 - **Local:** scheduled/recurring notifications for habit reminders — `AlarmManager` + `NotificationManager` (Android), `UNUserNotificationCenter` (iOS)
 - Bridge token registration and notification handling to JS manually
 
+#### FCM push (Android)
+
+Direct Firebase Messaging SDK — no RN wrapper.
+
+- `google-services.json` in `android/app/` + `com.google.gms:google-services` classpath plugin wires up the Firebase project
+- `firebase-bom` manages all Firebase SDK versions from one declaration — individual SDKs omit version numbers and inherit from the BOM
+- `ShazzarFirebaseMessagingService` extends `FirebaseMessagingService` (a long-lived `Service`, not a `BroadcastReceiver` — FCM keeps a persistent connection to Google's servers)
+  - `onNewToken` — called on first install and on token rotation; emits `fcmToken` event to JS
+  - `onMessageReceived` — called for data messages and foreground notifications; emits `fcmMessage` event to JS
+  - Background notification messages (title + body payload) are handled automatically by the FCM SDK and appear in the system tray without reaching `onMessageReceived`
+- `RCTDeviceEventEmitter` is the RN mechanism for native → JS events without a direct method call; JS subscribes with `NativeEventEmitter`
+- Service registered in `AndroidManifest.xml` with `com.google.firebase.MESSAGING_EVENT` intent filter — this is how FCM knows which service to deliver messages to
+
+---
+
+#### AlarmManager — reboot survival
+
+`AlarmManager` holds alarms in memory only. A device reboot wipes all registered alarms.
+
+**The fix — `BootReceiver` + `SharedPreferences`:**
+- `NotificationModule` persists each alarm (id, title, body, triggerAtMs) to `SharedPreferences` on `schedule()`, removes it on `cancel()`
+- `BootReceiver` listens for `BOOT_COMPLETED`, reads the persisted alarms, and re-registers each one with `AlarmManager.setExactAndAllowWhileIdle()`
+- Past-due alarms (triggerAtMs already elapsed at boot time) are skipped and removed — firing a stale habit reminder after reboot would confuse the user
+- `RECEIVE_BOOT_COMPLETED` permission declared in `AndroidManifest.xml`
+
 ### Phase 9 — Deep Linking
 - Android App Links + iOS Universal Links
 - `react-navigation` deep link config
