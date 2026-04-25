@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import DeviceInfo from '@/modules/DeviceInfo';
 import Health from '@/modules/Health';
 import SQLite from '@/modules/SQLite';
@@ -52,11 +52,19 @@ export function SettingsScreen(): React.JSX.Element {
       <Text style={styles.section}>LOCAL NOTIFICATIONS</Text>
       <TouchableOpacity style={styles.button} onPress={async () => {
         try {
-          const canSchedule = await Notifications.canScheduleExactAlarms();
-          if (!canSchedule) {
-            log('exact alarm permission missing — opening Settings');
-            await Notifications.openExactAlarmSettings();
-            return;
+          if (Platform.OS === 'ios') {
+            const status = await Notifications.requestPermission();
+            if (status !== 'granted') {
+              log(`notification permission ${status}`);
+              return;
+            }
+          } else {
+            const canSchedule = await Notifications.canScheduleExactAlarms();
+            if (!canSchedule) {
+              log('exact alarm permission missing — opening Settings');
+              await Notifications.openExactAlarmSettings();
+              return;
+            }
           }
           await Notifications.schedule(1, 'Shazzar', 'Time to check your habits!', 5000);
           log('notification scheduled — fires in 5 seconds');
