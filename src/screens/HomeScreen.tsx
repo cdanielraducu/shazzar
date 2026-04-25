@@ -1,20 +1,19 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '@/store/hooks';
-import {toggleHabit, Habit} from '@/store/habitsSlice';
+import {useHabitsStore, Habit} from '@/store/habitsStore';
 import {HomeScreenNavigationProp} from '@/navigation/types';
 
 export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const dispatch = useAppDispatch();
-  const habits = useAppSelector(state => state.habits.items);
+  const habits = useHabitsStore(state => state.habits);
+  const toggleHabit = useHabitsStore(state => state.toggleHabit);
 
   const renderItem = ({item}: {item: Habit}) => (
     <TouchableOpacity
       style={styles.item}
       onPress={() => navigation.navigate('HabitDetail', {habitId: item.id})}
-      onLongPress={() => dispatch(toggleHabit(item.id))}>
+      onLongPress={() => toggleHabit(item.id)}>
       <Text style={[styles.itemText, item.completedToday && styles.itemDone]}>
         {item.completedToday ? '✓ ' : '○ '}
         {item.name}

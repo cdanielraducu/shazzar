@@ -1,9 +1,8 @@
 import React from 'react';
 import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '@/store/hooks';
 import Haptics from '@/modules/Haptics';
-import {toggleHabit, removeHabit} from '@/store/habitsSlice';
+import {useHabitsStore} from '@/store/habitsStore';
 import {
   HabitDetailNavigationProp,
   HomeStackParamList,
@@ -14,11 +13,10 @@ type HabitDetailRouteProp = RouteProp<HomeStackParamList, 'HabitDetail'>;
 export function HabitDetailScreen(): React.JSX.Element {
   const navigation = useNavigation<HabitDetailNavigationProp>();
   const route = useRoute<HabitDetailRouteProp>();
-  const dispatch = useAppDispatch();
   const habitId = route.params?.habitId;
-  const habit = useAppSelector(state =>
-    state.habits.items.find(h => h.id === habitId),
-  );
+  const habit = useHabitsStore(state => state.habits.find(h => h.id === habitId));
+  const toggleHabit = useHabitsStore(state => state.toggleHabit);
+  const removeHabit = useHabitsStore(state => state.removeHabit);
 
   if (!habit) {
     return (
@@ -35,7 +33,7 @@ export function HabitDetailScreen(): React.JSX.Element {
         text: 'Remove',
         style: 'destructive',
         onPress: () => {
-          dispatch(removeHabit(habit.id));
+          removeHabit(habit.id);
           navigation.goBack();
         },
       },
@@ -62,7 +60,7 @@ export function HabitDetailScreen(): React.JSX.Element {
         style={styles.button}
         onPress={() => {
           Haptics.impact('heavy');
-          dispatch(toggleHabit(habit.id));
+          toggleHabit(habit.id);
         }}>
         <Text style={styles.buttonText}>
           {habit.completedToday ? 'Mark Incomplete' : 'Mark Complete'}

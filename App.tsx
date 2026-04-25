@@ -1,7 +1,5 @@
 import React from 'react';
 import {NavigationContainer, LinkingOptions} from '@react-navigation/native';
-import {Provider} from 'react-redux';
-import {store} from '@/store';
 import {RootNavigator} from '@/navigation';
 import {initDatabase} from '@/modules/SQLite/db';
 import {TabParamList} from '@/navigation/types';
@@ -24,11 +22,9 @@ const linking: LinkingOptions<TabParamList> = {
 
 function App(): React.JSX.Element {
   return (
-    <Provider store={store}>
-      <NavigationContainer linking={linking}>
-        <RootNavigator />
-      </NavigationContainer>
-    </Provider>
+    <NavigationContainer linking={linking}>
+      <RootNavigator />
+    </NavigationContainer>
   );
 }
 
