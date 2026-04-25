@@ -5,12 +5,7 @@ import Health from '@/modules/Health';
 import SQLite from '@/modules/SQLite';
 import {requestNotificationPermission, openAppSettings} from '@/modules/Permissions';
 import Notifications from '@/modules/Notifications';
-import {
-  softDeleteHabit,
-  restoreHabit,
-  getLiveHabits,
-  getDeletedHabits,
-} from '@/modules/SQLite/db';
+import {softDeleteHabit, getLiveHabits} from '@/modules/SQLite/db';
 
 export function SettingsScreen(): React.JSX.Element {
   const [output, setOutput] = useState<string>('Tap a button to test a module.');
@@ -189,8 +184,8 @@ export function SettingsScreen(): React.JSX.Element {
       <TouchableOpacity style={styles.button} onPress={async () => {
         try {
           await SQLite.execute(
-            `INSERT OR IGNORE INTO habits (id, name, frequency) VALUES (?, ?, ?)`,
-            ['habit-1', 'Morning run', 'daily'],
+            `INSERT OR IGNORE INTO habits (id, name, frequency, trigger_hour, trigger_minute, data_source) VALUES (?, ?, ?, ?, ?, ?)`,
+            ['habit-1', 'Morning run', 'daily', 9, 0, 'steps'],
           );
           log('seeded habit-1');
         } catch (e: any) {
@@ -211,16 +206,6 @@ export function SettingsScreen(): React.JSX.Element {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={async () => {
         try {
-          await restoreHabit('habit-1');
-          log('restored habit-1');
-        } catch (e: any) {
-          log(`error: ${e.message}`);
-        }
-      }}>
-        <Text style={styles.buttonText}>restore habit-1</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={async () => {
-        try {
           const live = await getLiveHabits();
           log(`live: ${JSON.stringify(live, null, 2)}`);
         } catch (e: any) {
@@ -228,16 +213,6 @@ export function SettingsScreen(): React.JSX.Element {
         }
       }}>
         <Text style={styles.buttonText}>live habits</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={async () => {
-        try {
-          const deleted = await getDeletedHabits();
-          log(`deleted: ${JSON.stringify(deleted, null, 2)}`);
-        } catch (e: any) {
-          log(`error: ${e.message}`);
-        }
-      }}>
-        <Text style={styles.buttonText}>deleted habits (recoverable)</Text>
       </TouchableOpacity>
 
       <View style={styles.outputBox}>

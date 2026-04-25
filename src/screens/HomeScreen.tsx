@@ -4,23 +4,36 @@ import {useNavigation} from '@react-navigation/native';
 import {useHabitsStore, Habit} from '@/store/habitsStore';
 import {HomeScreenNavigationProp} from '@/navigation/types';
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const habits = useHabitsStore(state => state.habits);
-  const toggleHabit = useHabitsStore(state => state.toggleHabit);
+  const isLoading = useHabitsStore(state => state.isLoading);
 
   const renderItem = ({item}: {item: Habit}) => (
     <TouchableOpacity
       style={styles.item}
-      onPress={() => navigation.navigate('HabitDetail', {habitId: item.id})}
-      onLongPress={() => toggleHabit(item.id)}>
-      <Text style={[styles.itemText, item.completedToday && styles.itemDone]}>
-        {item.completedToday ? '✓ ' : '○ '}
-        {item.name}
+      onPress={() => navigation.navigate('HabitDetail', {habitId: item.id})}>
+      <View>
+        <Text style={styles.itemText}>{item.name}</Text>
+        <Text style={styles.itemMeta}>
+          {item.frequency} · {pad(item.triggerHour)}:{pad(item.triggerMinute)}
+        </Text>
+      </View>
+      <Text style={styles.dataSource}>
+        {item.dataSource || '—'}
       </Text>
-      <Text style={styles.freq}>{item.frequency}</Text>
     </TouchableOpacity>
   );
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.empty}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -79,11 +92,14 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 14,
     color: '#ffffff',
+    marginBottom: 4,
   },
-  itemDone: {
-    color: '#51cf66',
+  itemMeta: {
+    fontSize: 11,
+    color: '#555555',
+    letterSpacing: 1,
   },
-  freq: {
+  dataSource: {
     fontSize: 11,
     color: '#555555',
     letterSpacing: 1,

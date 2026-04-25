@@ -16,4 +16,13 @@ RCT_EXTERN_METHOD(cancel:(nonnull NSNumber *)id
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(scheduleRepeating:(nonnull NSNumber *)id
+                  title:(NSString *)title
+                  body:(NSString *)body
+                  hour:(nonnull NSNumber *)hour
+                  minute:(nonnull NSNumber *)minute
+                  frequency:(NSString *)frequency
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 @end

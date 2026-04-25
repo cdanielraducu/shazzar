@@ -2,10 +2,12 @@ import React from 'react';
 import {NavigationContainer, LinkingOptions} from '@react-navigation/native';
 import {RootNavigator} from '@/navigation';
 import {initDatabase} from '@/modules/SQLite/db';
+import {useHabitsStore} from '@/store/habitsStore';
 import {TabParamList} from '@/navigation/types';
 
-// Creates tables and purges soft-deleted rows older than 30 days on every startup.
+// Creates tables, purges soft-deleted rows, then loads persisted habits into the store.
 initDatabase();
+useHabitsStore.getState().initialize();
 
 const linking: LinkingOptions<TabParamList> = {
   prefixes: ['shazzar://'],

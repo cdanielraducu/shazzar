@@ -12,6 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import org.json.JSONObject
+import java.util.Calendar
 
 class NotificationModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
@@ -28,12 +29,23 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         promise.resolve(token)
     }
 
-    private fun saveAlarm(id: Int, title: String, body: String, triggerAtMs: Long) {
+    private fun saveAlarm(
+        id: Int,
+        title: String,
+        body: String,
+        triggerAtMs: Long,
+        hour: Int = -1,
+        minute: Int = -1,
+        frequency: String = "",
+    ) {
         val alarm = JSONObject().apply {
             put("id", id)
             put("title", title)
             put("body", body)
             put("triggerAtMs", triggerAtMs)
+            put("hour", hour)
+            put("minute", minute)
+            put("frequency", frequency)
         }
         prefs().edit().putString(id.toString(), alarm.toString()).apply()
     }
@@ -42,8 +54,32 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         prefs().edit().remove(id.toString()).apply()
     }
 
-    // Returns true if the app can schedule exact alarms, false otherwise.
-    // On API 31+ this is a special app access permission the user grants in Settings.
+    private fun nextTriggerMs(hour: Int, minute: Int): Long {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, hour)
+        cal.set(Calendar.MINUTE, minute)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        if (cal.timeInMillis <= System.currentTimeMillis()) {
+            cal.add(Calendar.DAY_OF_YEAR, 1)
+        }
+        return cal.timeInMillis
+    }
+
+    private fun makePendingIntent(id: Int, title: String, body: String): PendingIntent {
+        val intent = Intent(reactApplicationContext, NotificationReceiver::class.java).apply {
+            putExtra(NotificationReceiver.EXTRA_ID, id)
+            putExtra(NotificationReceiver.EXTRA_TITLE, title)
+            putExtra(NotificationReceiver.EXTRA_BODY, body)
+        }
+        return PendingIntent.getBroadcast(
+            reactApplicationContext,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     @ReactMethod
     fun canScheduleExactAlarms(promise: Promise) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -54,8 +90,6 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         promise.resolve(alarmManager.canScheduleExactAlarms())
     }
 
-    // Opens the system Settings page where the user can grant exact alarm permission.
-    // There is no dialog for this — it must be granted in Special app access.
     @ReactMethod
     fun openExactAlarmSettings(promise: Promise) {
         try {
@@ -70,39 +104,16 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         }
     }
 
-    // Schedules a local notification to fire at triggerAtMs (Unix timestamp in ms).
-    // AlarmManager wakes the device if needed and fires the Intent exactly once.
-    // id is used to cancel or replace the notification later.
+    // One-shot notification — used by the Settings playground.
     @ReactMethod
     fun scheduleNotification(id: Int, title: String, body: String, triggerAtMs: Double, promise: Promise) {
         try {
-            val intent = Intent(reactApplicationContext, NotificationReceiver::class.java).apply {
-                putExtra(NotificationReceiver.EXTRA_ID, id)
-                putExtra(NotificationReceiver.EXTRA_TITLE, title)
-                putExtra(NotificationReceiver.EXTRA_BODY, body)
-            }
-
-            // FLAG_IMMUTABLE — required on API 31+. The PendingIntent cannot be modified
-            // after creation. FLAG_UPDATE_CURRENT replaces any existing PendingIntent
-            // with the same id, so scheduling the same id twice updates it.
-            val pendingIntent = PendingIntent.getBroadcast(
-                reactApplicationContext,
-                id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
-
             val alarmManager = reactApplicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-            // setExactAndAllowWhileIdle fires even in Doze mode (battery saver).
-            // Regular setExact() can be deferred by hours in Doze — not acceptable
-            // for habit reminders that need to fire at a specific time.
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 triggerAtMs.toLong(),
-                pendingIntent,
+                makePendingIntent(id, title, body),
             )
-
             saveAlarm(id, title, body, triggerAtMs.toLong())
             promise.resolve(null)
         } catch (e: Exception) {
@@ -110,9 +121,26 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         }
     }
 
-    // Cancels a previously scheduled notification by id.
-    // Recreates the same PendingIntent and passes it to cancel() —
-    // Android matches by requestCode (id) + Intent action/component.
+    // Repeating notification — fires at hour:minute daily or weekly.
+    // AlarmManager fires once; NotificationReceiver re-schedules the next occurrence.
+    // hour, minute, frequency are stored in SharedPreferences for the receiver to use.
+    @ReactMethod
+    fun scheduleRepeating(id: Int, title: String, body: String, hour: Int, minute: Int, frequency: String, promise: Promise) {
+        try {
+            val triggerAtMs = nextTriggerMs(hour, minute)
+            val alarmManager = reactApplicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMs,
+                makePendingIntent(id, title, body),
+            )
+            saveAlarm(id, title, body, triggerAtMs, hour, minute, frequency)
+            promise.resolve(null)
+        } catch (e: Exception) {
+            promise.reject("NOTIFICATION_ERROR", "Failed to schedule repeating: ${e.message}", e)
+        }
+    }
+
     @ReactMethod
     fun cancelNotification(id: Int, promise: Promise) {
         try {
