@@ -343,6 +343,29 @@ Removing Redux meant deleting:
 
 Replacing them with one file (`habitsStore.ts`) and one package (`zustand`).
 
+#### Immer — when it's worth it
+
+Zustand does not use Immer by default. Without it, every state update must return a new reference manually:
+
+```ts
+// flat state — spread is fine
+{ ...habit, completedToday: true }
+
+// deeply nested — spread pyramid, error-prone
+{ ...state, user: { ...state.user, settings: { ...state.user.settings, notifications: { ...state.user.settings.notifications, enabled: true } } } }
+```
+
+Immer removes the pyramid. It wraps state in a Proxy, records your mutations, and produces new references at every changed level automatically:
+
+```ts
+set(state => { state.user.settings.notifications.enabled = true })
+```
+
+**Shallow copy** — new reference at the top level, nested objects still shared. What `{ ...obj }` gives you.
+**Deep copy** — new reference at every level. What Immer produces (only for what changed), or `JSON.parse(JSON.stringify())` produces (for everything, expensively).
+
+Rule of thumb: flat state → manual spreading. Deeply nested state → opt into Immer middleware.
+
 #### When Redux is still the right choice
 
 Zustand wins on boilerplate for simple, local state. Redux Toolkit is worth the overhead when you need: time-travel debugging (Redux DevTools), complex derived state across many slices (`createSelector`), middleware like `redux-saga` for side-effect orchestration, or a strict unidirectional data flow enforced by convention across a large team.
