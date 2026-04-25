@@ -279,7 +279,7 @@ Direct Firebase Messaging SDK — no RN wrapper.
 - Past-due alarms (triggerAtMs already elapsed at boot time) are skipped and removed — firing a stale habit reminder after reboot would confuse the user
 - `RECEIVE_BOOT_COMPLETED` permission declared in `AndroidManifest.xml`
 
-### Phase 9 — Deep Linking
+### Phase 9 — Deep Linking ✅
 - Android App Links + iOS Universal Links
 - `react-navigation` deep link config
 - Testing: `adb shell am start` (Android), `xcrun simctl openurl` (iOS)
@@ -305,9 +305,70 @@ When the URL scheme matches but the path has no configured screen:
 
 Same "no match" logic, different outcome depending on whether existing navigation state is present.
 
-### Phase 10 — Zustand Migration
+### Phase 10 — Zustand Migration ✅
 - Migrate from Redux Toolkit to Zustand
 - Compare DX, boilerplate, and performance between both approaches
+
+#### State access — selectors vs direct store
+
+Redux requires two hooks and an intermediate action dispatch:
+
+```ts
+const habits = useAppSelector(state => state.habits.items);
+const dispatch = useAppDispatch();
+dispatch(toggleHabit(id));
+```
+
+Zustand collapses this — state and actions live in the same store object, both accessed through one hook:
+
+```ts
+const habits = useHabitsStore(state => state.habits);
+const toggleHabit = useHabitsStore(state => state.toggleHabit);
+toggleHabit(id);
+```
+
+No `dispatch`, no action creator, no action type string. You call the function directly.
+
+#### Re-render mechanism — same model, less ceremony
+
+The cross-screen reactivity works the same way in both. `useHabitsStore(state => state.habits)` creates a subscription. When `set()` is called inside an action, Zustand compares the selected slice with `Object.is` — if it changed, subscribed components re-render. What's gone is the middleware layer: no action object travelling through a reducer, no `switch` on action type. `set()` is called directly inside the function defined in `create()`.
+
+#### What was deleted
+
+Removing Redux meant deleting:
+- `configureStore` + `Provider` wrapper in `App.tsx`
+- `habitsSlice.ts` — action creators, reducer, `createSlice`
+- `hooks.ts` — `useAppSelector`, `useAppDispatch` typed wrappers
+- `@reduxjs/toolkit` and `react-redux` packages
+
+Replacing them with one file (`habitsStore.ts`) and one package (`zustand`).
+
+#### Immer — when it's worth it
+
+Zustand does not use Immer by default. Without it, every state update must return a new reference manually:
+
+```ts
+// flat state — spread is fine
+{ ...habit, completedToday: true }
+
+// deeply nested — spread pyramid, error-prone
+{ ...state, user: { ...state.user, settings: { ...state.user.settings, notifications: { ...state.user.settings.notifications, enabled: true } } } }
+```
+
+Immer removes the pyramid. It wraps state in a Proxy, records your mutations, and produces new references at every changed level automatically:
+
+```ts
+set(state => { state.user.settings.notifications.enabled = true })
+```
+
+**Shallow copy** — new reference at the top level, nested objects still shared. What `{ ...obj }` gives you.
+**Deep copy** — new reference at every level. What Immer produces (only for what changed), or `JSON.parse(JSON.stringify())` produces (for everything, expensively).
+
+Rule of thumb: flat state → manual spreading. Deeply nested state → opt into Immer middleware.
+
+#### When Redux is still the right choice
+
+Zustand wins on boilerplate for simple, local state. Redux Toolkit is worth the overhead when you need: time-travel debugging (Redux DevTools), complex derived state across many slices (`createSelector`), middleware like `redux-saga` for side-effect orchestration, or a strict unidirectional data flow enforced by convention across a large team.
 
 ---
 

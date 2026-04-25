@@ -7,8 +7,7 @@ import {
   View,
 } from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '@/store/hooks';
-import {addHabit, editHabit, Habit} from '@/store/habitsSlice';
+import {useHabitsStore, Habit} from '@/store/habitsStore';
 import {
   AddEditHabitNavigationProp,
   HomeStackParamList,
@@ -19,13 +18,13 @@ type AddEditHabitRouteProp = RouteProp<HomeStackParamList, 'AddEditHabit'>;
 export function AddEditHabitScreen(): React.JSX.Element {
   const navigation = useNavigation<AddEditHabitNavigationProp>();
   const route = useRoute<AddEditHabitRouteProp>();
-  const dispatch = useAppDispatch();
-
-  const existingHabit = useAppSelector(state =>
+  const existingHabit = useHabitsStore(state =>
     route.params?.habitId
-      ? state.habits.items.find(h => h.id === route.params.habitId)
+      ? state.habits.find(h => h.id === route.params.habitId)
       : undefined,
   );
+  const addHabit = useHabitsStore(state => state.addHabit);
+  const editHabit = useHabitsStore(state => state.editHabit);
 
   const isEdit = !!existingHabit;
   const [name, setName] = useState(existingHabit?.name ?? '');
@@ -39,9 +38,9 @@ export function AddEditHabitScreen(): React.JSX.Element {
       return;
     }
     if (isEdit && existingHabit) {
-      dispatch(editHabit({id: existingHabit.id, name: trimmed, frequency}));
+      editHabit(existingHabit.id, trimmed, frequency);
     } else {
-      dispatch(addHabit({name: trimmed, frequency}));
+      addHabit(trimmed, frequency);
     }
     navigation.goBack();
   };
