@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import DeviceInfo from '@/modules/DeviceInfo';
 import Health from '@/modules/Health';
@@ -16,6 +16,21 @@ export function SettingsScreen(): React.JSX.Element {
   const [output, setOutput] = useState<string>('Tap a button to test a module.');
 
   const log = (msg: string) => setOutput(msg);
+
+  // TODO: remove once FCM token flow is verified
+  useEffect(() => {
+    Notifications.getFcmToken().then(token => {
+      if (token) {
+        log(`fcm token: ${token}`);
+        console.log('[FCM] token:', token);
+      }
+    });
+    const sub = Notifications.onToken(token => {
+      log(`fcm token (rotated): ${token}`);
+      console.log('[FCM] token rotated:', token);
+    });
+    return () => sub?.remove();
+  }, []);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

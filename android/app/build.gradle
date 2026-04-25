@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 react {
     /* Folders */
@@ -117,6 +118,10 @@ dependencies {
     implementation("androidx.health.connect:connect-client:1.1.0-alpha07")
     // Coroutines — Health Connect API is suspend-based
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // Firebase Messaging — direct FCM SDK, no RN wrapper
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
