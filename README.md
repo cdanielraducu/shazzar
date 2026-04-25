@@ -284,6 +284,27 @@ Direct Firebase Messaging SDK — no RN wrapper.
 - `react-navigation` deep link config
 - Testing: `adb shell am start` (Android), `xcrun simctl openurl` (iOS)
 
+#### Custom URI scheme vs App Links / Universal Links
+
+Custom URI scheme (`shazzar://`) was chosen over verified App Links (Android) and Universal Links (iOS) because both verified approaches require a hosted domain with a served verification file (`assetlinks.json` on Android, `apple-app-site-association` on iOS). No production domain is active yet. Custom schemes work immediately with no domain ownership required — the tradeoff is that any app can claim the same scheme, whereas verified links are tied to a domain you control.
+
+#### Cold start vs warm start — two separate paths
+
+React Navigation handles deep links through two completely different mechanisms depending on app state:
+
+- **Cold start** (app not running): the URL arrives in the launch intent / `launchOptions`. React Navigation calls `Linking.getInitialURL()` once on mount to read it.
+- **Warm start** (app running in foreground or background): the OS delivers the URL through a separate delegate path. On Android this is `onNewIntent` on `MainActivity`; on iOS this is `application(_:open:options:)` on `AppDelegate`. React Navigation listens via `Linking.addEventListener('url', handler)`.
+
+Without the `application(_:open:options:)` method in `AppDelegate`, iOS warm-start URLs were silently dropped — `launchOptions` is only populated on cold start, so React Native never saw the URL.
+
+#### Unknown route behaviour
+
+When the URL scheme matches but the path has no configured screen:
+- **Cold start**: React Navigation can't resolve the URL to a screen and initialises to the default navigator state (Home).
+- **Warm start**: React Navigation receives the URL event, fails to match it, and does nothing — the user stays on whatever screen they were already on.
+
+Same "no match" logic, different outcome depending on whether existing navigation state is present.
+
 ### Phase 10 — Zustand Migration
 - Migrate from Redux Toolkit to Zustand
 - Compare DX, boilerplate, and performance between both approaches
