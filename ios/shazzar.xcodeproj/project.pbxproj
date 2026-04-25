@@ -11,6 +11,8 @@
 		0C80B921A6F3F58F76C31292 /* libPods-shazzar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-shazzar.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B8C4F29B96158642702B19 /* HealthModule.swift */; };
+		366F53C84E1140A2A63976F3 /* NotificationsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E311917E6C4404A82B6F292 /* NotificationsModule.swift */; };
+		56E2025215C949A38FB60314 /* NotificationsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F25B59C021474A89F882A0 /* NotificationsModule.m */; };
 		5A0E5E312F96343B00BA21A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0E5E302F96343B00BA21A5 /* AppDelegate.swift */; };
 		5A3B9D152F7AF9DE008EACFB /* HapticsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */; };
 		5A3B9D162F7AF9DE008EACFB /* HapticsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */; };
@@ -20,8 +22,6 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		BF91F87EF7F8D858F998A694 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA50596FC5F073E32CA1198 /* HealthKit.framework */; };
 		DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E117F68DF0B936C8C8D2627 /* HealthModule.m */; };
-		56E2025215C949A38FB60314 /* NotificationsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F25B59C021474A89F882A0 /* NotificationsModule.m */; };
-		366F53C84E1140A2A63976F3 /* NotificationsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E311917E6C4404A82B6F292 /* NotificationsModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +42,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = shazzar/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = shazzar/Info.plist; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-shazzar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.debug.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.debug.xcconfig"; sourceTree = "<group>"; };
+		4E311917E6C4404A82B6F292 /* NotificationsModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationsModule.swift; path = shazzar/modules/Notifications/NotificationsModule.swift; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-shazzar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shazzar.release.xcconfig"; path = "Target Support Files/Pods-shazzar/Pods-shazzar.release.xcconfig"; sourceTree = "<group>"; };
 		5A0E5E302F96343B00BA21A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = shazzar/AppDelegate.swift; sourceTree = "<group>"; };
 		5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HapticsModule.m; path = shazzar/modules/Haptics/HapticsModule.m; sourceTree = "<group>"; };
@@ -54,9 +55,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = shazzar/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9E117F68DF0B936C8C8D2627 /* HealthModule.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = HealthModule.m; path = shazzar/modules/Health/HealthModule.m; sourceTree = "<group>"; };
 		A9B8C4F29B96158642702B19 /* HealthModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HealthModule.swift; path = shazzar/modules/Health/HealthModule.swift; sourceTree = "<group>"; };
-		E8F25B59C021474A89F882A0 /* NotificationsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NotificationsModule.m; path = shazzar/modules/Notifications/NotificationsModule.m; sourceTree = "<group>"; };
-		4E311917E6C4404A82B6F292 /* NotificationsModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationsModule.swift; path = shazzar/modules/Notifications/NotificationsModule.swift; sourceTree = "<group>"; };
 		CDA50596FC5F073E32CA1198 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HealthKit.framework; sourceTree = SDKROOT; };
+		E8F25B59C021474A89F882A0 /* NotificationsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NotificationsModule.m; path = shazzar/modules/Notifications/NotificationsModule.m; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -292,9 +292,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -331,9 +335,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-shazzar/Pods-shazzar-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -454,6 +462,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = shazzar/shazzar.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JP89TF6A2V;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = shazzar/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -483,6 +492,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = shazzar/shazzar.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JP89TF6A2V;
 				INFOPLIST_FILE = shazzar/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -575,10 +585,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -656,10 +663,7 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
