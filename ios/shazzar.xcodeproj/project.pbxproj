@@ -14,14 +14,14 @@
 		5A0E5E312F96343B00BA21A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0E5E302F96343B00BA21A5 /* AppDelegate.swift */; };
 		5A3B9D152F7AF9DE008EACFB /* HapticsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */; };
 		5A3B9D162F7AF9DE008EACFB /* HapticsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */; };
-		5A3B9D192F7AF9FF008EACFB /* SQLiteModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */; };
-		5A3B9D1A2F7AF9FF008EACFB /* SQLiteModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */; };
 		5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */; };
 		5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */; };
 		6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		BF91F87EF7F8D858F998A694 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA50596FC5F073E32CA1198 /* HealthKit.framework */; };
 		DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E117F68DF0B936C8C8D2627 /* HealthModule.m */; };
+		56E2025215C949A38FB60314 /* NotificationsModule.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F25B59C021474A89F882A0 /* NotificationsModule.m */; };
+		366F53C84E1140A2A63976F3 /* NotificationsModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E311917E6C4404A82B6F292 /* NotificationsModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,8 +46,6 @@
 		5A0E5E302F96343B00BA21A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = shazzar/AppDelegate.swift; sourceTree = "<group>"; };
 		5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HapticsModule.m; path = shazzar/modules/Haptics/HapticsModule.m; sourceTree = "<group>"; };
 		5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticsModule.swift; path = shazzar/modules/Haptics/HapticsModule.swift; sourceTree = "<group>"; };
-		5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SQLiteModule.m; path = shazzar/modules/SQLite/SQLiteModule.m; sourceTree = "<group>"; };
-		5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SQLiteModule.swift; path = shazzar/modules/SQLite/SQLiteModule.swift; sourceTree = "<group>"; };
 		5AEE95DB2F76C62300DF39EA /* DeviceInfoModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DeviceInfoModule.m; path = shazzar/modules/DeviceInfo/DeviceInfoModule.m; sourceTree = "<group>"; };
 		5AEE95DC2F76C62300DF39EA /* DeviceInfoModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeviceInfoModule.swift; path = shazzar/modules/DeviceInfo/DeviceInfoModule.swift; sourceTree = "<group>"; };
 		5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "shazzar-Bridging-Header.h"; path = "shazzar/shazzar-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -56,6 +54,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = shazzar/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9E117F68DF0B936C8C8D2627 /* HealthModule.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = HealthModule.m; path = shazzar/modules/Health/HealthModule.m; sourceTree = "<group>"; };
 		A9B8C4F29B96158642702B19 /* HealthModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HealthModule.swift; path = shazzar/modules/Health/HealthModule.swift; sourceTree = "<group>"; };
+		E8F25B59C021474A89F882A0 /* NotificationsModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = NotificationsModule.m; path = shazzar/modules/Notifications/NotificationsModule.m; sourceTree = "<group>"; };
+		4E311917E6C4404A82B6F292 /* NotificationsModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationsModule.swift; path = shazzar/modules/Notifications/NotificationsModule.swift; sourceTree = "<group>"; };
 		CDA50596FC5F073E32CA1198 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HealthKit.framework; sourceTree = SDKROOT; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -101,8 +101,6 @@
 			isa = PBXGroup;
 			children = (
 				5A0E5E302F96343B00BA21A5 /* AppDelegate.swift */,
-				5A3B9D172F7AF9FF008EACFB /* SQLiteModule.m */,
-				5A3B9D182F7AF9FF008EACFB /* SQLiteModule.swift */,
 				5A3B9D132F7AF9DE008EACFB /* HapticsModule.m */,
 				5A3B9D142F7AF9DE008EACFB /* HapticsModule.swift */,
 				5AEE95DF2F76C63800DF39EA /* shazzar-Bridging-Header.h */,
@@ -113,6 +111,8 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				A9B8C4F29B96158642702B19 /* HealthModule.swift */,
 				9E117F68DF0B936C8C8D2627 /* HealthModule.m */,
+				E8F25B59C021474A89F882A0 /* NotificationsModule.m */,
+				4E311917E6C4404A82B6F292 /* NotificationsModule.swift */,
 			);
 			name = shazzar;
 			sourceTree = "<group>";
@@ -376,13 +376,13 @@
 			files = (
 				5AEE95DD2F76C62300DF39EA /* DeviceInfoModule.swift in Sources */,
 				5AEE95DE2F76C62300DF39EA /* DeviceInfoModule.m in Sources */,
-				5A3B9D192F7AF9FF008EACFB /* SQLiteModule.swift in Sources */,
-				5A3B9D1A2F7AF9FF008EACFB /* SQLiteModule.m in Sources */,
 				5A3B9D152F7AF9DE008EACFB /* HapticsModule.m in Sources */,
 				5A3B9D162F7AF9DE008EACFB /* HapticsModule.swift in Sources */,
 				1BC5E2745E616C59BE7884E6 /* HealthModule.swift in Sources */,
 				5A0E5E312F96343B00BA21A5 /* AppDelegate.swift in Sources */,
 				DD33663C31BEED36CCC576AE /* HealthModule.m in Sources */,
+				56E2025215C949A38FB60314 /* NotificationsModule.m in Sources */,
+				366F53C84E1140A2A63976F3 /* NotificationsModule.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

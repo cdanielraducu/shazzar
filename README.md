@@ -257,6 +257,18 @@ Direct Firebase Messaging SDK — no RN wrapper.
 
 ---
 
+#### iOS local notifications (UNUserNotificationCenter)
+
+- `UNUserNotificationCenter` is the single iOS API for all local notifications — no separate "exact alarm" permission needed; timing is handled by the framework
+- Permission is required before any notification can show — iOS has enforced this since day one; Android only added `POST_NOTIFICATIONS` in API 33
+- `UNTimeIntervalNotificationTrigger` fires once after a given interval in seconds — trigger time passed in milliseconds from JS, converted to seconds in Swift
+- `UNNotificationRequest` takes an identifier string — we use the numeric id cast to String so `cancel()` can match it with `removePendingNotificationRequests`
+- `removePendingNotificationRequests` cancels notifications not yet delivered; `removeDeliveredNotifications` removes ones already shown in the tray — `cancel()` only needs pending
+- Wired via `RCT_EXTERN_MODULE` + `.m` bridging file — same pattern as all other iOS native modules in this project
+- No equivalent of Android's `BootReceiver` needed — iOS suspends and resumes the notification schedule automatically; the OS owns the timer, not the app
+
+---
+
 #### AlarmManager — reboot survival
 
 `AlarmManager` holds alarms in memory only. A device reboot wipes all registered alarms.

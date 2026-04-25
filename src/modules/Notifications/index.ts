@@ -9,8 +9,9 @@ const emitter =
   Platform.OS === 'android' ? new NativeEventEmitter() : null;
 
 const Notifications = {
-  // --- Local notifications (Android only) ---
+  // --- Local notifications ---
 
+  // Android only — iOS handles permission via requestPermission() below.
   async canScheduleExactAlarms(): Promise<boolean> {
     if (Platform.OS !== 'android') {
       return false;
@@ -18,6 +19,7 @@ const Notifications = {
     return NativeNotifications.canScheduleExactAlarms();
   },
 
+  // Android only — iOS has no equivalent; permission is requested via requestPermission().
   async openExactAlarmSettings(): Promise<void> {
     if (Platform.OS !== 'android') {
       return;
@@ -25,26 +27,36 @@ const Notifications = {
     return NativeNotifications.openExactAlarmSettings();
   },
 
+  // iOS only — requests UNUserNotificationCenter permission.
+  // Returns 'granted' or 'denied'.
+  async requestPermission(): Promise<string> {
+    if (Platform.OS !== 'ios') {
+      return 'granted';
+    }
+    return NativeNotifications.requestPermission();
+  },
+
   // Schedules a local notification. triggerInMs is delay from now in milliseconds.
-  // Caller must ensure canScheduleExactAlarms() is true before calling this.
+  // Android: caller must ensure canScheduleExactAlarms() is true first.
+  // iOS: caller must ensure requestPermission() returned 'granted' first.
   async schedule(
     id: number,
     title: string,
     body: string,
     triggerInMs: number,
   ): Promise<void> {
-    if (Platform.OS !== 'android') {
-      return;
+    if (Platform.OS === 'android') {
+      const triggerAtMs = Date.now() + triggerInMs;
+      return NativeNotifications.scheduleNotification(id, title, body, triggerAtMs);
     }
-    const triggerAtMs = Date.now() + triggerInMs;
-    return NativeNotifications.scheduleNotification(id, title, body, triggerAtMs);
+    return NativeNotifications.schedule(id, title, body, triggerInMs);
   },
 
   async cancel(id: number): Promise<void> {
-    if (Platform.OS !== 'android') {
-      return;
+    if (Platform.OS === 'android') {
+      return NativeNotifications.cancelNotification(id);
     }
-    return NativeNotifications.cancelNotification(id);
+    return NativeNotifications.cancel(id);
   },
 
   // --- FCM push (Android only) ---
