@@ -1,7 +1,6 @@
 import SQLite from './index';
+import {Habit} from '@/store/habitsStore';
 
-// Called once at app startup. Creates tables if they don't exist,
-// then purges soft-deleted rows older than 30 days.
 export function initDatabase(): void {
   createTables();
   purgeDeleted();
@@ -10,17 +9,18 @@ export function initDatabase(): void {
 function createTables(): void {
   SQLite.execute(`
     CREATE TABLE IF NOT EXISTS habits (
-      id         TEXT PRIMARY KEY,
-      name       TEXT NOT NULL,
-      frequency  TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      deleted_at TEXT
+      id             TEXT PRIMARY KEY,
+      name           TEXT NOT NULL,
+      frequency      TEXT NOT NULL,
+      trigger_hour   INTEGER NOT NULL DEFAULT 9,
+      trigger_minute INTEGER NOT NULL DEFAULT 0,
+      data_source    TEXT NOT NULL DEFAULT 'none',
+      created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+      deleted_at     TEXT
     )
   `);
 }
 
-// Hard-deletes rows that were soft-deleted more than 30 days ago.
-// Runs synchronously on startup — the table will be small so this is fast.
 function purgeDeleted(): void {
   SQLite.execute(
     `DELETE FROM habits WHERE deleted_at < datetime('now', ?)`,
@@ -28,42 +28,64 @@ function purgeDeleted(): void {
   );
 }
 
-// Soft delete — sets deleted_at instead of removing the row.
-// The row stays in the database for up to 30 days, recoverable until then.
+export async function getLiveHabits(): Promise<Habit[]> {
+  const result = await SQLite.execute(
+    `SELECT id, name, frequency, trigger_hour, trigger_minute, data_source
+     FROM habits WHERE deleted_at IS NULL`,
+  );
+  return (
+    result.rows as {
+      id: string;
+      name: string;
+      frequency: string;
+      trigger_hour: number;
+      trigger_minute: number;
+      data_source: string;
+    }[]
+  ).map(row => ({
+    id: row.id,
+    name: row.name,
+    frequency: row.frequency as Habit['frequency'],
+    triggerHour: row.trigger_hour,
+    triggerMinute: row.trigger_minute,
+    dataSource: row.data_source as Habit['dataSource'],
+  }));
+}
+
+export async function insertHabit(habit: Habit): Promise<void> {
+  await SQLite.execute(
+    `INSERT INTO habits (id, name, frequency, trigger_hour, trigger_minute, data_source)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      habit.id,
+      habit.name,
+      habit.frequency,
+      habit.triggerHour,
+      habit.triggerMinute,
+      habit.dataSource,
+    ],
+  );
+}
+
+export async function updateHabit(habit: Habit): Promise<void> {
+  await SQLite.execute(
+    `UPDATE habits
+     SET name = ?, frequency = ?, trigger_hour = ?, trigger_minute = ?, data_source = ?
+     WHERE id = ?`,
+    [
+      habit.name,
+      habit.frequency,
+      habit.triggerHour,
+      habit.triggerMinute,
+      habit.dataSource,
+      habit.id,
+    ],
+  );
+}
+
 export async function softDeleteHabit(id: string): Promise<void> {
   await SQLite.execute(
     `UPDATE habits SET deleted_at = datetime('now') WHERE id = ?`,
     [id],
   );
-}
-
-// Undo a soft delete — clears deleted_at, making the row visible again.
-export async function restoreHabit(id: string): Promise<void> {
-  await SQLite.execute(
-    `UPDATE habits SET deleted_at = NULL WHERE id = ?`,
-    [id],
-  );
-}
-
-// Returns only live (non-deleted) habits.
-export async function getLiveHabits(): Promise<
-  {id: string; name: string; frequency: string}[]
-> {
-  const result = await SQLite.execute(
-    `SELECT id, name, frequency FROM habits WHERE deleted_at IS NULL`,
-  );
-  return result.rows as {id: string; name: string; frequency: string}[];
-}
-
-// Returns soft-deleted habits still within the 30-day window.
-export async function getDeletedHabits(): Promise<
-  {id: string; name: string; deleted_at: string}[]
-> {
-  const result = await SQLite.execute(
-    `SELECT id, name, deleted_at FROM habits
-     WHERE deleted_at IS NOT NULL
-     AND deleted_at >= datetime('now', '-30 days')
-     ORDER BY deleted_at DESC`,
-  );
-  return result.rows as {id: string; name: string; deleted_at: string}[];
 }

@@ -370,6 +370,93 @@ Rule of thumb: flat state → manual spreading. Deeply nested state → opt into
 
 Zustand wins on boilerplate for simple, local state. Redux Toolkit is worth the overhead when you need: time-travel debugging (Redux DevTools), complex derived state across many slices (`createSelector`), middleware like `redux-saga` for side-effect orchestration, or a strict unidirectional data flow enforced by convention across a large team.
 
+### Phase 11 — SQLite Persistence + Trigger Wiring ✅
+
+#### Product direction
+
+Shazzar is not a checkbox habit tracker. It is a notification hub — a user configures a trigger (when) and a data source (what to read), and Shazzar fires a notification with that data at the scheduled time. `completedToday` doesn't belong in this model.
+
+#### New Habit shape
+
+```ts
+interface Habit {
+  id: string;
+  name: string;
+  frequency: 'daily' | 'weekly';
+  triggerHour: number;
+  triggerMinute: number;
+  dataSource: string;
+}
+```
+
+`dataSource` is a plain `string` — not an enum. The app is designed to plug into any data source (steps, sleep, messages, news, custom). Locking it to a union would require a code change every time a new source is added. A string keeps the model open without sacrificing anything — validation happens at the integration layer, not in the type.
+
+`completedToday` and `toggleHabit` are removed entirely. There is nothing to check off.
+
+#### SQLite schema
+
+```sql
+CREATE TABLE IF NOT EXISTS habits (
+  id             TEXT PRIMARY KEY,
+  name           TEXT NOT NULL,
+  frequency      TEXT NOT NULL,
+  trigger_hour   INTEGER NOT NULL DEFAULT 9,
+  trigger_minute INTEGER NOT NULL DEFAULT 0,
+  data_source    TEXT NOT NULL DEFAULT 'none',
+  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  deleted_at     TEXT
+)
+```
+
+`deleted_at` enables soft delete — rows are hidden immediately but kept for 30 days, then hard-purged on the next startup.
+
+#### Persistence wiring — optimistic writes
+
+State updates are immediate; SQLite writes happen in the background:
+
+```ts
+addHabit: (name, frequency, triggerHour, triggerMinute, dataSource) => {
+  const habit = { id: Date.now().toString(), ... };
+  set(state => ({ habits: [...state.habits, habit] }));   // instant
+  insertHabit(habit).catch(e => console.error(e));         // background
+},
+```
+
+This keeps the UI instant. SQLite is local — failures are rare and non-blocking. Same pattern for `editHabit` (calls `updateHabit`) and `removeHabit` (calls `softDeleteHabit`).
+
+#### Startup load
+
+`initDatabase()` runs synchronously on module load — creates tables and purges stale rows. `initialize()` is called immediately after and loads persisted habits into the store:
+
+```ts
+initDatabase();
+useHabitsStore.getState().initialize();
+```
+
+The store exposes `isLoading: true` until the async load completes. `HomeScreen` renders a loading state during this window — in practice it's near-instant for a local SQLite file, but correct to handle.
+
+#### Trigger wiring — how a habit becomes a notification
+
+Creating or editing a habit calls `scheduleHabitNotification(habit)`. Deleting calls `cancelHabitNotification(id)`. Both are fire-and-forget side effects inside the Zustand store actions, the same pattern as SQLite writes.
+
+The notification ID is derived deterministically from the habit's string ID:
+
+```ts
+Number(habitId) % 2147483647  // maps 13-digit timestamp to a safe 32-bit int
+```
+
+This means scheduling the same habit twice (on edit) replaces the previous alarm — no duplicate notifications.
+
+#### Repeating triggers — iOS vs Android
+
+The two platforms handle recurrence fundamentally differently.
+
+**iOS** — `UNCalendarNotificationTrigger(dateMatching: DateComponents(hour:, minute:), repeats: true)`. The OS owns the schedule. Once registered, it fires at that time every day (or every week if weekday is also set) with no further app involvement.
+
+**Android** — `AlarmManager.setExactAndAllowWhileIdle()` fires once. After showing the notification, `NotificationReceiver` reads `hour`, `minute`, and `frequency` from SharedPreferences and re-registers the alarm for the next occurrence. This is the standard Android pattern — `AlarmManager.setRepeating()` exists but is inexact on API 19+.
+
+`BootReceiver` handles the reboot case: it reads all persisted alarms, advances any past-due repeating alarms to their next future occurrence, and re-registers them. One-shot past-due alarms are dropped.
+
 ---
 
 ## Prerequisites

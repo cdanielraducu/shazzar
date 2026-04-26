@@ -31,6 +31,15 @@ export function AddEditHabitScreen(): React.JSX.Element {
   const [frequency, setFrequency] = useState<Habit['frequency']>(
     existingHabit?.frequency ?? 'daily',
   );
+  const [triggerHour, setTriggerHour] = useState(
+    existingHabit?.triggerHour ?? 9,
+  );
+  const [triggerMinute, setTriggerMinute] = useState(
+    existingHabit?.triggerMinute ?? 0,
+  );
+  const [dataSource, setDataSource] = useState(
+    existingHabit?.dataSource ?? '',
+  );
 
   const handleSave = () => {
     const trimmed = name.trim();
@@ -38,12 +47,26 @@ export function AddEditHabitScreen(): React.JSX.Element {
       return;
     }
     if (isEdit && existingHabit) {
-      editHabit(existingHabit.id, trimmed, frequency);
+      editHabit(
+        existingHabit.id,
+        trimmed,
+        frequency,
+        triggerHour,
+        triggerMinute,
+        dataSource,
+      );
     } else {
-      addHabit(trimmed, frequency);
+      addHabit(trimmed, frequency, triggerHour, triggerMinute, dataSource);
     }
     navigation.goBack();
   };
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const adjustHour = (delta: number) =>
+    setTriggerHour(h => (h + delta + 24) % 24);
+  const adjustMinute = (delta: number) =>
+    setTriggerMinute(m => (m + delta + 60) % 60);
 
   return (
     <View style={styles.container}>
@@ -64,7 +87,7 @@ export function AddEditHabitScreen(): React.JSX.Element {
         onSubmitEditing={handleSave}
       />
 
-      <Text style={styles.label}>Frequency</Text>
+      <Text style={styles.label}>FREQUENCY</Text>
       <View style={styles.toggleRow}>
         {(['daily', 'weekly'] as Habit['frequency'][]).map(f => (
           <TouchableOpacity
@@ -81,6 +104,39 @@ export function AddEditHabitScreen(): React.JSX.Element {
           </TouchableOpacity>
         ))}
       </View>
+
+      <Text style={styles.label}>TRIGGER TIME</Text>
+      <View style={styles.timeRow}>
+        <View style={styles.timePicker}>
+          <TouchableOpacity onPress={() => adjustHour(1)}>
+            <Text style={styles.arrow}>▲</Text>
+          </TouchableOpacity>
+          <Text style={styles.timeValue}>{pad(triggerHour)}</Text>
+          <TouchableOpacity onPress={() => adjustHour(-1)}>
+            <Text style={styles.arrow}>▼</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.timeSep}>:</Text>
+        <View style={styles.timePicker}>
+          <TouchableOpacity onPress={() => adjustMinute(5)}>
+            <Text style={styles.arrow}>▲</Text>
+          </TouchableOpacity>
+          <Text style={styles.timeValue}>{pad(triggerMinute)}</Text>
+          <TouchableOpacity onPress={() => adjustMinute(-5)}>
+            <Text style={styles.arrow}>▼</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Text style={styles.label}>DATA SOURCE</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="e.g. steps, messages, news..."
+        placeholderTextColor="#555"
+        value={dataSource}
+        onChangeText={setDataSource}
+        returnKeyType="done"
+      />
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>
@@ -130,7 +186,7 @@ const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   toggle: {
     flex: 1,
@@ -152,11 +208,41 @@ const styles = StyleSheet.create({
   toggleTextActive: {
     color: '#ffffff',
   },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 8,
+  },
+  timePicker: {
+    alignItems: 'center',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+  },
+  timeValue: {
+    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+    marginVertical: 8,
+  },
+  arrow: {
+    color: '#555555',
+    fontSize: 14,
+  },
+  timeSep: {
+    color: '#555555',
+    fontSize: 22,
+    fontWeight: '700',
+  },
   saveButton: {
     backgroundColor: '#2a2a2a',
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
+    marginTop: 8,
   },
   saveButtonText: {
     color: '#cccccc',

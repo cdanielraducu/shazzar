@@ -52,6 +52,20 @@ const Notifications = {
     return NativeNotifications.schedule(id, title, body, triggerInMs);
   },
 
+  // Schedules a repeating notification at a fixed hour:minute.
+  // iOS: UNCalendarNotificationTrigger handles recurrence natively.
+  // Android: AlarmManager fires once; NotificationReceiver re-schedules each time.
+  async scheduleRepeating(
+    id: number,
+    title: string,
+    body: string,
+    hour: number,
+    minute: number,
+    frequency: 'daily' | 'weekly',
+  ): Promise<void> {
+    return NativeNotifications.scheduleRepeating(id, title, body, hour, minute, frequency);
+  },
+
   async cancel(id: number): Promise<void> {
     if (Platform.OS === 'android') {
       return NativeNotifications.cancelNotification(id);

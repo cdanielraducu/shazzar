@@ -1,7 +1,6 @@
 import React from 'react';
 import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import Haptics from '@/modules/Haptics';
 import {useHabitsStore} from '@/store/habitsStore';
 import {
   HabitDetailNavigationProp,
@@ -10,12 +9,13 @@ import {
 
 type HabitDetailRouteProp = RouteProp<HomeStackParamList, 'HabitDetail'>;
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 export function HabitDetailScreen(): React.JSX.Element {
   const navigation = useNavigation<HabitDetailNavigationProp>();
   const route = useRoute<HabitDetailRouteProp>();
   const habitId = route.params?.habitId;
   const habit = useHabitsStore(state => state.habits.find(h => h.id === habitId));
-  const toggleHabit = useHabitsStore(state => state.toggleHabit);
   const removeHabit = useHabitsStore(state => state.removeHabit);
 
   if (!habit) {
@@ -49,23 +49,19 @@ export function HabitDetailScreen(): React.JSX.Element {
       <Text style={styles.name}>{habit.name}</Text>
       <Text style={styles.meta}>{habit.frequency.toUpperCase()}</Text>
 
-      <View style={styles.statusRow}>
-        <Text
-          style={[styles.status, habit.completedToday && styles.statusDone]}>
-          {habit.completedToday ? 'Completed today' : 'Not done yet'}
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>TRIGGER</Text>
+        <Text style={styles.infoValue}>
+          {pad(habit.triggerHour)}:{pad(habit.triggerMinute)}
         </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          Haptics.impact('heavy');
-          toggleHabit(habit.id);
-        }}>
-        <Text style={styles.buttonText}>
-          {habit.completedToday ? 'Mark Incomplete' : 'Mark Complete'}
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>DATA SOURCE</Text>
+        <Text style={styles.infoValue}>
+          {habit.dataSource || '—'}
         </Text>
-      </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
         style={styles.button}
@@ -79,33 +75,6 @@ export function HabitDetailScreen(): React.JSX.Element {
         style={[styles.button, styles.danger]}
         onPress={handleDelete}>
         <Text style={[styles.buttonText, styles.dangerText]}>Delete</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.sectionLabel}>HAPTICS</Text>
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('light')}>
-          <Text style={styles.chipText}>impact light</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('medium')}>
-          <Text style={styles.chipText}>impact medium</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.impact('heavy')}>
-          <Text style={styles.chipText}>impact heavy</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('success')}>
-          <Text style={styles.chipText}>notif success</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('warning')}>
-          <Text style={styles.chipText}>notif warning</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.chip} onPress={() => Haptics.notification('error')}>
-          <Text style={styles.chipText}>notif error</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.chip} onPress={() => Haptics.selection()}>
-        <Text style={styles.chipText}>selection</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -141,15 +110,19 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     marginBottom: 24,
   },
-  statusRow: {
-    marginBottom: 32,
+  infoRow: {
+    marginBottom: 20,
   },
-  status: {
-    fontSize: 14,
-    color: '#888888',
+  infoLabel: {
+    fontSize: 11,
+    color: '#555555',
+    letterSpacing: 2,
+    marginBottom: 4,
   },
-  statusDone: {
-    color: '#51cf66',
+  infoValue: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#1a1a1a',
@@ -158,6 +131,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 10,
     alignItems: 'center',
+    marginTop: 12,
   },
   buttonText: {
     color: '#cccccc',
@@ -177,28 +151,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 40,
-  },
-  sectionLabel: {
-    color: '#444444',
-    fontSize: 10,
-    letterSpacing: 2,
-    marginTop: 32,
-    marginBottom: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 8,
-  },
-  chip: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    marginBottom: 8,
-  },
-  chipText: {
-    color: '#aaaaaa',
-    fontSize: 12,
   },
 });

@@ -55,5 +55,41 @@ class NotificationsModule: NSObject {
     resolve(nil)
   }
 
+  // Schedules a repeating notification at a fixed time of day.
+  // UNCalendarNotificationTrigger with repeats: true lets the OS handle recurrence —
+  // no re-scheduling needed after each fire, unlike Android's AlarmManager.
+  @objc func scheduleRepeating(_ id: NSNumber,
+                               title: String,
+                               body: String,
+                               hour: NSNumber,
+                               minute: NSNumber,
+                               frequency: String,
+                               resolver resolve: @escaping RCTPromiseResolveBlock,
+                               rejecter reject: @escaping RCTPromiseRejectBlock) {
+    let content = UNMutableNotificationContent()
+    content.title = title
+    content.body = body
+    content.sound = .default
+
+    var components = DateComponents()
+    components.hour = hour.intValue
+    components.minute = minute.intValue
+    // For weekly, pin to the current weekday — fires same day each week.
+    if frequency == "weekly" {
+      components.weekday = Calendar.current.component(.weekday, from: Date())
+    }
+
+    let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
+    let request = UNNotificationRequest(identifier: "\(id)", content: content, trigger: trigger)
+
+    UNUserNotificationCenter.current().add(request) { error in
+      if let error = error {
+        reject("NOTIFICATION_ERROR", error.localizedDescription, error)
+      } else {
+        resolve(nil)
+      }
+    }
+  }
+
   @objc static func requiresMainQueueSetup() -> Bool { false }
 }
