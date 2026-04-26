@@ -62,8 +62,9 @@ const Notifications = {
     hour: number,
     minute: number,
     frequency: 'daily' | 'weekly',
+    dataSource: string,
   ): Promise<void> {
-    return NativeNotifications.scheduleRepeating(id, title, body, hour, minute, frequency);
+    return NativeNotifications.scheduleRepeating(id, title, body, hour, minute, frequency, dataSource);
   },
 
   async cancel(id: number): Promise<void> {
