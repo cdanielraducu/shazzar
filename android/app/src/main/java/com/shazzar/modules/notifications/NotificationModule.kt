@@ -37,6 +37,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
         hour: Int = -1,
         minute: Int = -1,
         frequency: String = "",
+        dataSource: String = "",
     ) {
         val alarm = JSONObject().apply {
             put("id", id)
@@ -46,6 +47,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
             put("hour", hour)
             put("minute", minute)
             put("frequency", frequency)
+            put("dataSource", dataSource)
         }
         prefs().edit().putString(id.toString(), alarm.toString()).apply()
     }
@@ -125,7 +127,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
     // AlarmManager fires once; NotificationReceiver re-schedules the next occurrence.
     // hour, minute, frequency are stored in SharedPreferences for the receiver to use.
     @ReactMethod
-    fun scheduleRepeating(id: Int, title: String, body: String, hour: Int, minute: Int, frequency: String, promise: Promise) {
+    fun scheduleRepeating(id: Int, title: String, body: String, hour: Int, minute: Int, frequency: String, dataSource: String, promise: Promise) {
         try {
             val triggerAtMs = nextTriggerMs(hour, minute)
             val alarmManager = reactApplicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -134,7 +136,7 @@ class NotificationModule(reactContext: ReactApplicationContext) :
                 triggerAtMs,
                 makePendingIntent(id, title, body),
             )
-            saveAlarm(id, title, body, triggerAtMs, hour, minute, frequency)
+            saveAlarm(id, title, body, triggerAtMs, hour, minute, frequency, dataSource)
             promise.resolve(null)
         } catch (e: Exception) {
             promise.reject("NOTIFICATION_ERROR", "Failed to schedule repeating: ${e.message}", e)

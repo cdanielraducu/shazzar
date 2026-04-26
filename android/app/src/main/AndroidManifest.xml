@@ -17,6 +17,9 @@
     <!-- Health Connect — step count read access -->
     <uses-permission android:name="android.permission.health.READ_STEPS" />
 
+    <!-- Required to call startForegroundService() — needed for StepsFetchService -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <!-- Health Connect library requires minSdk 26 but our app targets 21.
          We handle the API level check at runtime in HealthModule.kt —
          isAvailable() returns false on API < 26, all other methods reject early. -->
@@ -68,6 +71,11 @@
           <action android:name="android.intent.action.BOOT_COMPLETED" />
         </intent-filter>
       </receiver>
+
+      <!-- Fetches Health Connect data in the foreground so it can enrich notification bodies -->
+      <service
+        android:name=".modules.notifications.StepsFetchService"
+        android:exported="false" />
 
       <!-- Receives FCM tokens and messages directly from the Firebase SDK -->
       <service

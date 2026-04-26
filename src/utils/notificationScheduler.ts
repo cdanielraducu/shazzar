@@ -35,6 +35,7 @@ export async function scheduleHabitNotification(habit: Habit): Promise<void> {
       habit.triggerHour,
       habit.triggerMinute,
       habit.frequency,
+      habit.dataSource,
     );
   } catch (e) {
     console.error('[scheduler] scheduleHabitNotification failed', e);

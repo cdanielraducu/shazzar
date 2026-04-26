@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import org.json.JSONObject
 import java.util.Calendar
@@ -22,15 +23,36 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val title = intent.getStringExtra(EXTRA_TITLE) ?: "Shazzar"
-        val body = intent.getStringExtra(EXTRA_BODY) ?: ""
+        val staticBody = intent.getStringExtra(EXTRA_BODY) ?: ""
         val notificationId = intent.getIntExtra(EXTRA_ID, 0)
 
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val prefs = context.getSharedPreferences("shazzar_alarms", Context.MODE_PRIVATE)
+        val json = prefs.getString(notificationId.toString(), null)
+        val alarm = json?.let { runCatching { JSONObject(it) }.getOrNull() }
+        val dataSource = alarm?.optString("dataSource", "") ?: ""
 
+        Log.d("Shazzar", "NotificationReceiver fired: id=$notificationId dataSource='$dataSource'")
+
+        if (dataSource.equals("steps", ignoreCase = true)) {
+            // Health Connect refuses reads from background processes.
+            // Delegate to StepsFetchService — a ForegroundService is allowed to read health data.
+            val serviceIntent = Intent(context, StepsFetchService::class.java).apply {
+                putExtra(EXTRA_ID, notificationId)
+                putExtra(EXTRA_TITLE, title)
+                putExtra(EXTRA_BODY, staticBody)
+                putExtra("alarmJson", json)
+            }
+            context.startForegroundService(serviceIntent)
+        } else {
+            showNotification(context, notificationId, title, staticBody)
+            rescheduleIfRepeating(context, notificationId, title, staticBody, alarm)
+        }
+    }
+
+    private fun showNotification(context: Context, id: Int, title: String, body: String) {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Habit Reminders",
-            NotificationManager.IMPORTANCE_DEFAULT,
+            CHANNEL_ID, "Habit Reminders", NotificationManager.IMPORTANCE_DEFAULT,
         )
         manager.createNotificationChannel(channel)
 
@@ -41,23 +63,20 @@ class NotificationReceiver : BroadcastReceiver() {
             .setAutoCancel(true)
             .build()
 
-        manager.notify(notificationId, notification)
-
-        // Re-schedule for the next occurrence if this is a repeating alarm.
-        // AlarmManager fires once — repeating is handled by scheduling again here.
-        rescheduleIfRepeating(context, notificationId, title, body)
+        manager.notify(id, notification)
     }
 
-    private fun rescheduleIfRepeating(context: Context, id: Int, title: String, body: String) {
-        val prefs = context.getSharedPreferences("shazzar_alarms", Context.MODE_PRIVATE)
-        val json = prefs.getString(id.toString(), null) ?: return
-        val alarm = JSONObject(json)
-
+    private fun rescheduleIfRepeating(
+        context: Context,
+        id: Int,
+        title: String,
+        body: String,
+        alarm: JSONObject?,
+    ) {
+        if (alarm == null) return
         val hour = alarm.optInt("hour", -1)
         val minute = alarm.optInt("minute", -1)
         val frequency = alarm.optString("frequency", "")
-
-        // One-shot alarms have no hour/minute stored — skip re-scheduling.
         if (hour < 0 || minute < 0 || frequency.isEmpty()) return
 
         val cal = Calendar.getInstance()
@@ -65,10 +84,7 @@ class NotificationReceiver : BroadcastReceiver() {
         cal.set(Calendar.MINUTE, minute)
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
-
-        val intervalDays = if (frequency == "weekly") 7 else 1
-        cal.add(Calendar.DAY_OF_YEAR, intervalDays)
-
+        cal.add(Calendar.DAY_OF_YEAR, if (frequency == "weekly") 7 else 1)
         val nextTriggerAtMs = cal.timeInMillis
 
         val nextIntent = Intent(context, NotificationReceiver::class.java).apply {
@@ -77,17 +93,14 @@ class NotificationReceiver : BroadcastReceiver() {
             putExtra(EXTRA_BODY, body)
         }
         val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            id,
-            nextIntent,
+            context, id, nextIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
+        (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+            .setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerAtMs, pendingIntent)
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerAtMs, pendingIntent)
-
-        // Update stored triggerAtMs so BootReceiver has the correct next-fire time.
-        val updated = JSONObject(json).apply { put("triggerAtMs", nextTriggerAtMs) }
-        prefs.edit().putString(id.toString(), updated.toString()).apply()
+        val updated = JSONObject(alarm.toString()).apply { put("triggerAtMs", nextTriggerAtMs) }
+        context.getSharedPreferences("shazzar_alarms", Context.MODE_PRIVATE)
+            .edit().putString(id.toString(), updated.toString()).apply()
     }
 }

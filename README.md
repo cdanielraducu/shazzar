@@ -457,6 +457,103 @@ The two platforms handle recurrence fundamentally differently.
 
 `BootReceiver` handles the reboot case: it reads all persisted alarms, advances any past-due repeating alarms to their next future occurrence, and re-registers them. One-shot past-due alarms are dropped.
 
+### Phase 12 — Live data at notification time ✅
+
+#### The core promise
+
+Shazzar's value is in the notification body — not "time to check in" but "you walked 8,432 steps today." Data must be read at the moment the notification fires, not when the habit is scheduled.
+
+#### Android — reading Health Connect from a BroadcastReceiver
+
+`NotificationReceiver.onReceive()` runs natively when `AlarmManager` fires. It has access to `Context` — enough to call `HealthConnectClient.getOrCreate(context)` directly, no React bridge needed.
+
+The problem: `onReceive()` returns immediately. If async work is launched and `onReceive()` returns before it finishes, Android can kill the process. `goAsync()` extends the receiver's active window — but Health Connect adds a second problem: it refuses reads from background processes entirely, regardless of `goAsync()`.
+
+The solution is `StepsFetchService` — a `ForegroundService` started by the receiver. The receiver's only job for steps is to hand off:
+
+```kotlin
+if (dataSource.equals("steps", ignoreCase = true)) {
+    context.startForegroundService(Intent(context, StepsFetchService::class.java))
+}
+```
+
+`dataSource` is stored in SharedPreferences alongside the alarm. When the receiver fires, it reads `dataSource` — if `"steps"`, it starts the service; everything else shows the static body directly. This is how new data sources plug in: add a branch in the receiver, implement the fetch in a service if needed.
+
+#### ForegroundService — what it is and why it's needed
+
+A `Service` in Android is a component that runs without a UI. By default it's a background service — Android can kill it anytime under memory pressure, and Health Connect refuses to serve it.
+
+A `ForegroundService` is a service the user is *aware of*. Android's rule: if the user can see evidence of your work, you're allowed to do more. The evidence is a mandatory notification that must appear while the service is running. That notification is the contract — it's why `startForeground()` must be called immediately after `onStartCommand()`, and Android enforces this with a hard timeout (~5 seconds).
+
+```
+onStartCommand() called
+    │
+    ├─ startForeground(id, notification)   ← mandatory, must be first
+    │       shows "Fetching your data…"
+    │
+    └─ launch coroutine on IO thread
+            │
+            ├─ readStepsToday()            ← Health Connect allows this now
+            ├─ showHabitNotification()     ← shows the real notification
+            ├─ reschedule()
+            ├─ stopForeground(REMOVE)      ← removes the temp notification
+            └─ stopSelf()                  ← Android reclaims the service
+```
+
+The coroutine (`CoroutineScope(Dispatchers.IO).launch`) runs the Health Connect read on a background thread without blocking the main thread. `Dispatchers.IO` picks from a thread pool designed for I/O work. Equivalent concepts in other environments: `async/await` in JS, `Task { await ... }` in Swift.
+
+| | BroadcastReceiver | ForegroundService |
+|---|---|---|
+| Lifetime | ~10 seconds max | Until `stopSelf()` |
+| Foreground? | No | Yes — once `startForeground()` called |
+| Health Connect | Rejected | Allowed |
+| Visible to user | No | Yes — notification required |
+
+`START_NOT_STICKY` tells Android not to restart the service if it's killed — the next AlarmManager fire will start a fresh one anyway.
+
+#### BroadcastReceiver — when a ForegroundService is not needed
+
+The foreground service was only required because Health Connect specifically gates reads behind foreground status. Most receiver use cases are fast and synchronous — no service needed:
+
+- Showing a notification with static content — build and call `notify()`, done in milliseconds
+- `BootReceiver` re-registering alarms after reboot — pure in-memory work
+- Reacting to system events: battery low, charger connected, airplane mode toggled, app installed
+
+Rule of thumb: if the work finishes in under 10 seconds and doesn't touch a restricted API, a `BroadcastReceiver` is enough. Add `goAsync()` if you need slightly more time. Escalate to a `ForegroundService` only when you need a long-running operation or an API the OS gates behind foreground status.
+
+#### iOS extensions vs Android components
+
+iOS uses **extensions** — separate binaries bundled inside the `.ipa`, each signed independently, running in their own process with a hard OS-enforced lifetime. The main types relevant to Shazzar:
+
+- **Notification Service Extension** — intercepts a push notification before it's shown, modifies the content. Used for decrypting E2E-encrypted payloads (Signal), enriching with live data. 30 second timeout.
+- **Notification Content Extension** — renders a fully custom notification UI instead of the standard title/body.
+- **Widget Extension** — home and lock screen widgets. iOS snapshots it periodically, no continuous execution.
+- **Share Extension** — appears in the iOS share sheet, lets your app receive content from other apps.
+
+Android has no concept of extensions. Instead it uses **intent filters** — components (activities, services, receivers) inside the same APK declare what actions they handle, and the OS routes to them. No separate binary, no separate signing.
+
+| iOS Extension | Android equivalent |
+|---|---|
+| Notification Service Extension | `ForegroundService` started by `BroadcastReceiver` |
+| Widget Extension | `AppWidgetProvider` (`BroadcastReceiver` subclass) |
+| Share Extension | `Activity` with `ACTION_SEND` intent filter |
+| Intents Extension (Siri) | App Actions (XML intent mapping) |
+| File Provider Extension | `ContentProvider` subclass |
+
+#### NotificationListenerService — reading other apps' notifications
+
+A future Shazzar data source direction: instead of reading health data, read notifications from other apps (WhatsApp, Instagram, any app) and decide whether to show, filter, or transform them.
+
+Android's mechanism is `NotificationListenerService` — a special service that, once the user grants access in **Settings → Notifications → Notification access**, can read all notifications from all apps as they arrive and dismiss them programmatically.
+
+This would make `dataSource` mean `"whatsapp"` or `"instagram"` — Shazzar as a notification hub that aggregates and filters across all apps, not just health data. Planned for Phase 13.
+
+The limitation on both platforms: you cannot intercept a notification *before* it appears — only react after it's posted. There is no pre-filter hook.
+
+#### iOS — Notification Service Extension (deferred)
+
+`UNCalendarNotificationTrigger` fires the notification directly with no opportunity to inject data. The iOS mechanism is a `UNNotificationServiceExtension` — a separate app target that intercepts the notification just before it's displayed and can modify the content. It requires an Apple Developer account and a separate Xcode target. Deferred until account is active.
+
 ---
 
 ## Prerequisites
