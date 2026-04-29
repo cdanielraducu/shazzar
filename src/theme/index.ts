@@ -35,6 +35,7 @@ export const font = {
   medium:   'Outfit-Medium',
   semibold: 'Outfit-SemiBold',
   bold:     'Outfit-Bold',
+  mono:     'Courier New',
 } as const;
 
 export const fontSize = {
