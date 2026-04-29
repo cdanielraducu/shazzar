@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useHabitsStore, Habit} from '@/store/habitsStore';
 import {HomeScreenNavigationProp} from '@/navigation/types';
+import {colors, font, fontSize, spacing, letterSpacing} from '@/theme';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -14,16 +15,22 @@ export function HomeScreen(): React.JSX.Element {
   const renderItem = ({item}: {item: Habit}) => (
     <TouchableOpacity
       style={styles.item}
+      activeOpacity={0.6}
       onPress={() => navigation.navigate('HabitDetail', {habitId: item.id})}>
-      <View>
-        <Text style={styles.itemText}>{item.name}</Text>
-        <Text style={styles.itemMeta}>
-          {item.frequency} · {pad(item.triggerHour)}:{pad(item.triggerMinute)}
+      <View style={styles.timeBlock}>
+        <Text style={styles.itemTime}>
+          {pad(item.triggerHour)}:{pad(item.triggerMinute)}
         </Text>
+        <Text style={styles.itemFreq}>{item.frequency}</Text>
       </View>
-      <Text style={styles.dataSource}>
-        {item.dataSource || '—'}
-      </Text>
+      <View style={styles.divider} />
+      <View style={styles.itemBody}>
+        <Text style={styles.itemName} numberOfLines={1}>
+          {item.name}
+        </Text>
+        <Text style={styles.itemSource}>{item.dataSource || '—'}</Text>
+      </View>
+      <Text style={styles.chevron}>›</Text>
     </TouchableOpacity>
   );
 
@@ -39,17 +46,14 @@ export function HomeScreen(): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Habits</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('AddEditHabit', {})}>
-          <Text style={styles.addIcon}>＋</Text>
-        </TouchableOpacity>
       </View>
       <FlatList
         data={habits}
         keyExtractor={item => item.id}
         renderItem={renderItem}
+        contentContainerStyle={styles.list}
         ListEmptyComponent={
-          <Text style={styles.empty}>No habits yet. Tap ＋ to add one.</Text>
+          <Text style={styles.empty}>No habits yet. Tap + to add one.</Text>
         }
       />
     </View>
@@ -59,55 +63,86 @@ export function HomeScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
-    paddingTop: 60,
-    paddingHorizontal: 24,
+    backgroundColor: colors.bg,
+    paddingTop: spacing.screenV,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
+    paddingHorizontal: spacing.screenH,
+    paddingBottom: spacing[3],
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: 2,
+    fontFamily: font.bold,
+    fontSize: fontSize.display,
+    color: colors.fg1,
+    letterSpacing: letterSpacing.wider,
   },
-  addIcon: {
-    fontSize: 22,
-    color: '#888888',
+  list: {
+    paddingHorizontal: spacing.screenH,
+    paddingBottom: 100, // clear floating tab bar
   },
   item: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 8,
+    backgroundColor: colors.bg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    paddingHorizontal: spacing.cardH,
+    paddingVertical: 13,
+    marginBottom: spacing.itemGap,
+    gap: spacing.cardH,
   },
-  itemText: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginBottom: 4,
+  timeBlock: {
+    minWidth: 44,
+    alignItems: 'flex-end',
+    flexShrink: 0,
   },
-  itemMeta: {
-    fontSize: 11,
-    color: '#555555',
-    letterSpacing: 1,
+  itemTime: {
+    fontFamily: font.semibold,
+    fontSize: fontSize.sm,
+    color: colors.accent,
+    fontVariant: ['tabular-nums'],
   },
-  dataSource: {
-    fontSize: 11,
-    color: '#555555',
-    letterSpacing: 1,
+  itemFreq: {
+    fontFamily: font.regular,
+    fontSize: fontSize.micro,
+    color: colors.fg6,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 2,
+  },
+  divider: {
+    width: 1,
+    height: 26,
+    backgroundColor: colors.border,
+    flexShrink: 0,
+  },
+  itemBody: {
+    flex: 1,
+    minWidth: 0,
+  },
+  itemName: {
+    fontFamily: font.medium,
+    fontSize: fontSize.body,
+    color: colors.fg1,
+  },
+  itemSource: {
+    fontFamily: font.regular,
+    fontSize: fontSize.label,
+    color: colors.fg5,
+    marginTop: 3,
+  },
+  chevron: {
+    fontFamily: font.regular,
+    fontSize: fontSize.body,
+    color: colors.surface2,
+    flexShrink: 0,
   },
   empty: {
-    color: '#444444',
-    fontSize: 13,
+    fontFamily: font.regular,
+    color: colors.fg6,
+    fontSize: fontSize.sm,
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: spacing[10],
   },
 });

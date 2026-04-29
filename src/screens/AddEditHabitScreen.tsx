@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import {
+  Alert,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,8 +14,11 @@ import {
   AddEditHabitNavigationProp,
   HomeStackParamList,
 } from '@/navigation/types';
+import {colors, font, fontSize, spacing, radius, letterSpacing} from '@/theme';
 
 type AddEditHabitRouteProp = RouteProp<HomeStackParamList, 'AddEditHabit'>;
+
+const pad = (n: number) => String(n).padStart(2, '0');
 
 export function AddEditHabitScreen(): React.JSX.Element {
   const navigation = useNavigation<AddEditHabitNavigationProp>();
@@ -25,6 +30,7 @@ export function AddEditHabitScreen(): React.JSX.Element {
   );
   const addHabit = useHabitsStore(state => state.addHabit);
   const editHabit = useHabitsStore(state => state.editHabit);
+  const removeHabit = useHabitsStore(state => state.removeHabit);
 
   const isEdit = !!existingHabit;
   const [name, setName] = useState(existingHabit?.name ?? '');
@@ -61,7 +67,21 @@ export function AddEditHabitScreen(): React.JSX.Element {
     navigation.goBack();
   };
 
-  const pad = (n: number) => String(n).padStart(2, '0');
+  const handleDelete = () => {
+    if (existingHabit) {
+      Alert.alert('Remove habit?', existingHabit.name, [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            removeHabit(existingHabit.id);
+            navigation.goBack();
+          },
+        },
+      ]);
+    }
+  };
 
   const adjustHour = (delta: number) =>
     setTriggerHour(h => (h + delta + 24) % 24);
@@ -69,17 +89,21 @@ export function AddEditHabitScreen(): React.JSX.Element {
     setTriggerMinute(m => (m + delta + 60) % 60);
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled">
       <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
         <Text style={styles.backText}>← Back</Text>
       </TouchableOpacity>
 
       <Text style={styles.title}>{isEdit ? 'Edit Habit' : 'New Habit'}</Text>
 
+      <Text style={styles.label}>HABIT NAME</Text>
       <TextInput
         style={styles.input}
         placeholder="Habit name..."
-        placeholderTextColor="#555"
+        placeholderTextColor={colors.fg5}
         value={name}
         onChangeText={setName}
         autoFocus
@@ -93,7 +117,8 @@ export function AddEditHabitScreen(): React.JSX.Element {
           <TouchableOpacity
             key={f}
             style={[styles.toggle, frequency === f && styles.toggleActive]}
-            onPress={() => setFrequency(f)}>
+            onPress={() => setFrequency(f)}
+            activeOpacity={0.7}>
             <Text
               style={[
                 styles.toggleText,
@@ -132,122 +157,164 @@ export function AddEditHabitScreen(): React.JSX.Element {
       <TextInput
         style={styles.input}
         placeholder="e.g. steps, messages, news..."
-        placeholderTextColor="#555"
+        placeholderTextColor={colors.fg5}
         value={dataSource}
         onChangeText={setDataSource}
         returnKeyType="done"
       />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+      <TouchableOpacity
+        style={styles.saveButton}
+        onPress={handleSave}
+        activeOpacity={0.7}>
         <Text style={styles.saveButtonText}>
           {isEdit ? 'Save Changes' : 'Add Habit'}
         </Text>
       </TouchableOpacity>
-    </View>
+
+      {isEdit && (
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+          activeOpacity={0.7}>
+          <Text style={styles.deleteButtonText}>Delete Habit</Text>
+        </TouchableOpacity>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
-    paddingTop: 60,
-    paddingHorizontal: 24,
+    backgroundColor: colors.bg,
+  },
+  content: {
+    paddingTop: spacing.screenV,
+    paddingHorizontal: spacing.screenH,
+    paddingBottom: spacing[10],
   },
   back: {
-    marginBottom: 32,
+    marginBottom: spacing[8],
   },
   backText: {
-    color: '#888888',
-    fontSize: 14,
+    fontFamily: font.regular,
+    color: colors.fg4,
+    fontSize: fontSize.body,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: 1,
-    marginBottom: 28,
-  },
-  input: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: '#ffffff',
-    fontSize: 15,
-    marginBottom: 24,
+    fontFamily: font.bold,
+    fontSize: fontSize.heading,
+    color: colors.fg1,
+    letterSpacing: letterSpacing.wide,
+    marginBottom: spacing[7],
   },
   label: {
-    fontSize: 11,
-    color: '#555555',
-    letterSpacing: 2,
-    marginBottom: 10,
+    fontFamily: font.regular,
+    fontSize: fontSize.label,
+    color: colors.fg5,
+    letterSpacing: letterSpacing.wider,
+    marginBottom: spacing[2] + 2,
+  },
+  input: {
+    fontFamily: font.regular,
+    backgroundColor: colors.surface1,
+    borderRadius: radius.default,
+    paddingHorizontal: spacing.cardH,
+    paddingVertical: spacing[3],
+    color: colors.fg1,
+    fontSize: fontSize.bodyLg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.sectionGap,
   },
   toggleRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 24,
+    gap: spacing[2] + 2,
+    marginBottom: spacing.sectionGap,
   },
   toggle: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: colors.surface1,
+    borderRadius: radius.default,
+    paddingVertical: spacing[3],
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   toggleActive: {
-    backgroundColor: '#2a2a2a',
-    borderWidth: 1,
-    borderColor: '#444444',
+    backgroundColor: colors.accentBg,
+    borderColor: colors.accentMuted,
   },
   toggleText: {
-    color: '#555555',
-    fontSize: 13,
-    fontWeight: '600',
+    fontFamily: font.semibold,
+    color: colors.fg5,
+    fontSize: fontSize.sm,
   },
   toggleTextActive: {
-    color: '#ffffff',
+    color: colors.accent,
   },
   timeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
-    gap: 8,
+    marginBottom: spacing.sectionGap,
+    gap: spacing[2],
   },
   timePicker: {
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
+    backgroundColor: colors.surface1,
+    borderRadius: radius.default,
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[5],
   },
   timeValue: {
-    color: '#ffffff',
-    fontSize: 22,
-    fontWeight: '700',
+    fontFamily: font.bold,
+    color: colors.fg1,
+    fontSize: fontSize.time,
     fontVariant: ['tabular-nums'],
-    marginVertical: 8,
+    marginVertical: spacing[2],
+    minWidth: 32,
+    textAlign: 'center',
   },
   arrow: {
-    color: '#555555',
-    fontSize: 14,
+    fontFamily: font.regular,
+    color: colors.fg5,
+    fontSize: fontSize.body,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
   },
   timeSep: {
-    color: '#555555',
-    fontSize: 22,
-    fontWeight: '700',
+    fontFamily: font.bold,
+    color: colors.fg5,
+    fontSize: fontSize.time,
   },
   saveButton: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: colors.accentBg,
+    borderRadius: radius.default,
+    paddingVertical: spacing.cardV,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: spacing[2],
+    borderWidth: 1,
+    borderColor: colors.accentMuted,
   },
   saveButtonText: {
-    color: '#cccccc',
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 1,
+    fontFamily: font.bold,
+    color: colors.accent,
+    fontSize: fontSize.body,
+    letterSpacing: letterSpacing.wide,
+  },
+  deleteButton: {
+    backgroundColor: colors.dangerBg,
+    borderRadius: radius.default,
+    paddingVertical: spacing.cardV,
+    alignItems: 'center',
+    marginTop: spacing[2] + 2,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+  },
+  deleteButtonText: {
+    fontFamily: font.semibold,
+    color: colors.danger,
+    fontSize: fontSize.body,
   },
 });
