@@ -38,7 +38,7 @@
 	<key>NSUserNotificationUsageDescription</key>
 	<string>Shazzar sends reminders to help you stay consistent with your habits.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -68,6 +68,14 @@
 				<string>shazzar</string>
 			</array>
 		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Outfit-Bold.ttf</string>
+		<string>Outfit-Regular.ttf</string>
+		<string>Outfit-SemiBold.ttf</string>
+		<string>Outfit-Medium.ttf</string>
+		<string>Outfit-Light.ttf</string>
 	</array>
 </dict>
 </plist>

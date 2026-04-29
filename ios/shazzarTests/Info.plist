@@ -20,5 +20,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Outfit-Bold.ttf</string>
+		<string>Outfit-Regular.ttf</string>
+		<string>Outfit-SemiBold.ttf</string>
+		<string>Outfit-Medium.ttf</string>
+		<string>Outfit-Light.ttf</string>
+	</array>
 </dict>
 </plist>

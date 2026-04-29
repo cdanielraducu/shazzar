@@ -6,6 +6,7 @@ import {
   HabitDetailNavigationProp,
   HomeStackParamList,
 } from '@/navigation/types';
+import {colors, font, fontSize, spacing, radius, letterSpacing} from '@/theme';
 
 type HabitDetailRouteProp = RouteProp<HomeStackParamList, 'HabitDetail'>;
 
@@ -40,6 +41,12 @@ export function HabitDetailScreen(): React.JSX.Element {
     ]);
   };
 
+  const infoRows: [string, string][] = [
+    ['TRIGGER', `${pad(habit.triggerHour)}:${pad(habit.triggerMinute)}`],
+    ['DATA SOURCE', habit.dataSource || '—'],
+    ['FREQUENCY', habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)],
+  ];
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
@@ -49,33 +56,30 @@ export function HabitDetailScreen(): React.JSX.Element {
       <Text style={styles.name}>{habit.name}</Text>
       <Text style={styles.meta}>{habit.frequency.toUpperCase()}</Text>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>TRIGGER</Text>
-        <Text style={styles.infoValue}>
-          {pad(habit.triggerHour)}:{pad(habit.triggerMinute)}
-        </Text>
+      {infoRows.map(([label, value]) => (
+        <View key={label} style={styles.infoRow}>
+          <Text style={styles.infoLabel}>{label}</Text>
+          <Text style={styles.infoValue}>{value}</Text>
+        </View>
+      ))}
+
+      <View style={styles.actions}>
+        <TouchableOpacity
+          style={styles.editButton}
+          activeOpacity={0.7}
+          onPress={() =>
+            navigation.navigate('AddEditHabit', {habitId: habit.id})
+          }>
+          <Text style={styles.editButtonText}>Edit</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.deleteButton}
+          activeOpacity={0.7}
+          onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>DATA SOURCE</Text>
-        <Text style={styles.infoValue}>
-          {habit.dataSource || '—'}
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() =>
-          navigation.navigate('AddEditHabit', {habitId: habit.id})
-        }>
-        <Text style={styles.buttonText}>Edit</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, styles.danger]}
-        onPress={handleDelete}>
-        <Text style={[styles.buttonText, styles.dangerText]}>Delete</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -83,73 +87,83 @@ export function HabitDetailScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: colors.bg,
   },
   content: {
-    paddingTop: 60,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingTop: spacing.screenV,
+    paddingHorizontal: spacing.screenH,
+    paddingBottom: spacing[10],
   },
   back: {
-    marginBottom: 32,
+    marginBottom: spacing[8],
   },
   backText: {
-    color: '#888888',
-    fontSize: 14,
+    fontFamily: font.regular,
+    color: colors.fg4,
+    fontSize: fontSize.body,
   },
   name: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: 1,
-    marginBottom: 8,
+    fontFamily: font.bold,
+    fontSize: fontSize.heading,
+    color: colors.fg1,
+    letterSpacing: letterSpacing.wide,
+    marginBottom: spacing[2],
   },
   meta: {
-    fontSize: 11,
-    color: '#555555',
-    letterSpacing: 2,
-    marginBottom: 24,
+    fontFamily: font.regular,
+    fontSize: fontSize.label,
+    color: colors.fg5,
+    letterSpacing: letterSpacing.wider,
+    marginBottom: spacing.sectionGap + spacing[2],
   },
   infoRow: {
-    marginBottom: 20,
+    marginBottom: spacing[6],
   },
   infoLabel: {
-    fontSize: 11,
-    color: '#555555',
-    letterSpacing: 2,
-    marginBottom: 4,
+    fontFamily: font.regular,
+    fontSize: fontSize.label,
+    color: colors.fg5,
+    letterSpacing: letterSpacing.wider,
+    marginBottom: spacing[1],
   },
   infoValue: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontWeight: '600',
+    fontFamily: font.semibold,
+    fontSize: fontSize.value,
+    color: colors.fg1,
   },
-  button: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 10,
+  actions: {
+    gap: spacing[2] + 2,
+    marginTop: spacing[3],
+  },
+  editButton: {
+    backgroundColor: colors.surface1,
+    borderRadius: radius.default,
+    paddingVertical: spacing.cardV,
     alignItems: 'center',
-    marginTop: 12,
   },
-  buttonText: {
-    color: '#cccccc',
-    fontSize: 14,
-    fontWeight: '600',
+  editButtonText: {
+    fontFamily: font.semibold,
+    color: colors.fg2,
+    fontSize: fontSize.body,
   },
-  danger: {
+  deleteButton: {
+    backgroundColor: colors.dangerBg,
+    borderRadius: radius.default,
+    paddingVertical: spacing.cardV,
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#3a1a1a',
-    backgroundColor: '#1a0a0a',
+    borderColor: colors.dangerBorder,
   },
-  dangerText: {
-    color: '#ff6b6b',
+  deleteButtonText: {
+    fontFamily: font.semibold,
+    color: colors.danger,
+    fontSize: fontSize.body,
   },
   missing: {
-    color: '#555555',
-    fontSize: 14,
+    fontFamily: font.regular,
+    color: colors.fg5,
+    fontSize: fontSize.body,
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: spacing[10],
   },
 });

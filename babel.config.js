@@ -18,6 +18,7 @@ module.exports = {
           '@/types': './src/types',
           '@/constants': './src/constants',
           '@/assets': './src/assets',
+          '@/theme': './src/theme/index.ts',
         },
       },
     ],
