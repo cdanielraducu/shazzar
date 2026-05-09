@@ -107,3 +107,10 @@
              AppNotificationListenerPackage. NotificationReceiver extended with whatsapp/instagram/telegram branch.
              iOS: stub with TODO(ios) comments — cross-app notification access not permitted on iOS.
              JS bridge: src/modules/AppNotifications/index.ts.
+
+- [x] Add weekly habit recurrence to BootReceiver past-due advancement logic (unit test)
+      completed: 2026-05-09 | pr: #TBD
+      notes: Weekly logic (intervalDays = 7) was already implemented in BootReceiver.kt.
+             Added Robolectric unit tests covering: weekly past-due (+7d), daily past-due (+1d),
+             one-shot removal, and future alarm unchanged. Bootstrapped test infrastructure
+             (testImplementation deps + testOptions in build.gradle).
