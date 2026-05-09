@@ -236,7 +236,7 @@ The three pillars all build on **JSI (JavaScript Interface)** — a C++ layer th
 - iOS `Info.plist` + Android `AndroidManifest.xml` config
 - Request → denied → redirect to settings flow
 
-### Phase 8 — Notifications (Push + Local)
+### Phase 8 — Notifications (Push + Local) ✅
 - No wrappers, no third-party notification libraries
 - **Push:** Android direct FCM SDK (Kotlin), iOS direct APNs (Swift) — needs Apple Developer account
 - **Local:** scheduled/recurring notifications for habit reminders — `AlarmManager` + `NotificationManager` (Android), `UNUserNotificationCenter` (iOS)
@@ -278,6 +278,14 @@ Direct Firebase Messaging SDK — no RN wrapper.
 - `BootReceiver` listens for `BOOT_COMPLETED`, reads the persisted alarms, and re-registers each one with `AlarmManager.setExactAndAllowWhileIdle()`
 - Past-due alarms (triggerAtMs already elapsed at boot time) are skipped and removed — firing a stale habit reminder after reboot would confuse the user
 - `RECEIVE_BOOT_COMPLETED` permission declared in `AndroidManifest.xml`
+
+#### Phase 8 audit (2026-05-09)
+- Android FCM: ✅ `ShazzarFirebaseMessagingService` handles `onNewToken` and `onMessageReceived`
+- Android local: ✅ `AlarmManager` + `BootReceiver` + `NotificationReceiver` — reboot-proof
+- iOS local: ✅ `UNCalendarNotificationTrigger` with `repeats: true` — OS owns the schedule
+- iOS APNs: blocked on Apple Developer account (credential gap, not a code gap)
+- `NotificationReceiver.dataSource`: handles "steps" via `StepsFetchService`; all other values fall through to static body — acceptable for now; app-based sources (whatsapp, instagram) are planned for Phase 14
+- Habit cancellation: `cancelNotification()` in `NotificationModule.kt` cancels the `AlarmManager` entry AND removes from `SharedPreferences` — no edge cases found
 
 ### Phase 9 — Deep Linking ✅
 - Android App Links + iOS Universal Links
