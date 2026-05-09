@@ -109,7 +109,7 @@
              JS bridge: src/modules/AppNotifications/index.ts.
 
 - [x] Add weekly habit recurrence to BootReceiver past-due advancement logic (unit test)
-      completed: 2026-05-09 | pr: #TBD
+      completed: 2026-05-09 | pr: #12
       notes: Weekly logic (intervalDays = 7) was already implemented in BootReceiver.kt.
              Added Robolectric unit tests covering: weekly past-due (+7d), daily past-due (+1d),
              one-shot removal, and future alarm unchanged. Bootstrapped test infrastructure
