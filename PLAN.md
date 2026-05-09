@@ -8,31 +8,11 @@
 
 ## Active
 
-- [ ] Implement NotificationListenerService for cross-app notification reading
-      priority: high | phase: 14 | added: 2026-05-08
-      notes: Data source `"whatsapp"`, `"instagram"`, etc. Android full implementation.
-             iOS has no equivalent — stub the JS interface with a clear TODO(ios) comment.
-             Wire `dataSource` branch in `NotificationReceiver` to delegate to this service.
-             Requires `BIND_NOTIFICATION_LISTENER_SERVICE` permission + user grant flow in Settings.
-
 - [ ] Add weekly habit recurrence to BootReceiver past-due advancement logic
       priority: high | phase: 11-followup | added: 2026-05-08
       notes: BootReceiver currently advances past-due alarms by 24h. Weekly habits need 7-day
              advancement. Check `frequency` from SharedPreferences before computing next fire time.
              Add a unit test covering the weekly case across a reboot boundary.
-
-- [ ] Remove FCM token debug UI from SettingsScreen
-      priority: low | phase: 8-cleanup | added: 2026-05-08
-      notes: `src/screens/SettingsScreen.tsx` — TODO comment already there.
-             Remove the `getFcmToken` useEffect and any debug output state once FCM flow is
-             confirmed stable. Verify nothing else depends on that state before deleting.
-
-- [ ] Mark Phase 8 ✅ in README and audit remaining Android notification gaps
-      priority: medium | phase: 8-close | added: 2026-05-08
-      notes: Android FCM ✅, Android local ✅, iOS local ✅ (via UNUserNotificationCenter).
-             iOS APNs push is blocked on Apple Developer account — not a code gap, a credential gap.
-             Audit: does `NotificationReceiver` handle all `dataSource` values gracefully?
-             Does cancelling a habit also cancel the AlarmManager entry in all edge cases?
 
 - [ ] CI/CD: generate release keystore + configure Android signing env vars
       priority: medium | phase: 4-followup | added: 2026-05-08
@@ -106,3 +86,24 @@
 
 - [x] Claude-inspired design system (Phase 13)
       completed: 2026-05 | pr: #8
+
+- [x] Remove FCM token debug UI from SettingsScreen
+      completed: 2026-05-09 | pr: #TBD
+      notes: Removed getFcmToken useEffect and TODO comment from SettingsScreen.tsx.
+             `output` state and `log` helper retained — used by other buttons.
+             `Notifications` import retained — used by other functions.
+
+- [x] Mark Phase 8 ✅ in README and audit remaining Android notification gaps
+      completed: 2026-05-09 | pr: #TBD
+      notes: Phase 8 header marked ✅. Audit note added before Phase 9.
+             NotificationReceiver: steps handled via StepsFetchService; all other dataSource values
+             fall through to static body — graceful. cancelNotification() cancels AlarmManager entry
+             and removes from SharedPreferences atomically — no edge cases found.
+
+- [x] Implement NotificationListenerService for cross-app notification reading
+      completed: 2026-05-09 | pr: #TBD
+      notes: Android: AppNotificationListenerService (counts via SharedPreferences),
+             AppNotificationListenerModule (isEnabled/openSettings/getNotificationCount/clearNotificationCount + onAppNotification event),
+             AppNotificationListenerPackage. NotificationReceiver extended with whatsapp/instagram/telegram branch.
+             iOS: stub with TODO(ios) comments — cross-app notification access not permitted on iOS.
+             JS bridge: src/modules/AppNotifications/index.ts.

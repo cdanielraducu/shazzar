@@ -43,10 +43,52 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("alarmJson", json)
             }
             context.startForegroundService(serviceIntent)
+        } else if (resolveAppPackage(dataSource) != null || dataSource.contains('.')) {
+            // App-based data sources — read notification count from AppNotificationListenerService.
+            val pkgName = resolveAppPackage(dataSource) ?: dataSource
+            val body = buildAppNotifBody(context, pkgName, staticBody)
+            showNotification(context, notificationId, title, body)
+            rescheduleIfRepeating(context, notificationId, title, staticBody, alarm)
         } else {
             showNotification(context, notificationId, title, staticBody)
             rescheduleIfRepeating(context, notificationId, title, staticBody, alarm)
         }
+    }
+
+    // Maps well-known app aliases to their canonical Android package names.
+    // Returns null if the alias is not recognised (caller should treat the value
+    // as a raw package name if it contains a dot).
+    private fun resolveAppPackage(dataSource: String): String? = when (dataSource.lowercase()) {
+        "whatsapp" -> "com.whatsapp"
+        "instagram" -> "com.instagram.android"
+        "telegram" -> "org.telegram.messenger"
+        else -> null
+    }
+
+    // Returns a human-readable alias for a known package, used in notification body copy.
+    private fun appDisplayName(pkgName: String): String = when (pkgName) {
+        "com.whatsapp" -> "WhatsApp"
+        "com.instagram.android" -> "Instagram"
+        "org.telegram.messenger" -> "Telegram"
+        else -> pkgName
+    }
+
+    // Reads the stored notification count from AppNotificationListenerService's prefs
+    // and formats an enriched body string.  Falls back to staticBody when count is 0
+    // or the service has not yet recorded any notifications.
+    private fun buildAppNotifBody(
+        context: Context,
+        pkgName: String,
+        staticBody: String,
+    ): String {
+        val prefs = context.getSharedPreferences(
+            AppNotificationListenerService.PREFS_NAME, Context.MODE_PRIVATE
+        )
+        val count = prefs.getString(pkgName, "0")?.toIntOrNull() ?: 0
+        if (count <= 0) return staticBody
+
+        val displayName = appDisplayName(pkgName)
+        return "You have $count unread $displayName ${if (count == 1) "message" else "messages"}"
     }
 
     private fun showNotification(context: Context, id: Int, title: String, body: String) {
