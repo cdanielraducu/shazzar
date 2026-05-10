@@ -108,6 +108,14 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                jvmArgs '-Djava.awt.headless=true'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -128,4 +136,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Unit testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.12.1")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("org.json:json:20231013")
 }
