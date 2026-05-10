@@ -21,6 +21,9 @@ platform :android do
 
   desc "Build a signed release AAB"
   lane :build do
+    signing_vars = %w[ANDROID_KEYSTORE_PATH ANDROID_STORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD]
+    missing = signing_vars.select { |v| ENV[v].nil? || ENV[v].empty? }
+    UI.important("WARNING: Missing signing env vars: #{missing.join(', ')}. The AAB will be unsigned and cannot be uploaded to Play Store. See README Phase 4 and scripts/setup-play-store.md.") unless missing.empty?
     gradle(
       task: "bundle",
       build_type: "Release",
@@ -37,11 +40,26 @@ platform :android do
   desc "Upload a pre-built AAB to Play Store (internal track)"
   lane :deploy do |options|
     aab_path = options[:aab] || UI.user_error!("Pass aab: e.g. aab:\"android/app/build/outputs/bundle/release/app-release.aab\"")
+    json_key = ENV["PLAY_STORE_JSON_KEY_PATH"]
+    UI.user_error!("PLAY_STORE_JSON_KEY_PATH is not set. See scripts/setup-play-store.md for setup instructions.") if json_key.nil? || json_key.empty?
+    UI.user_error!("PLAY_STORE_JSON_KEY_PATH points to a missing file: #{json_key}") unless File.exist?(json_key)
     upload_to_play_store(
       track: "internal",
       aab: aab_path,
-      json_key: ENV["PLAY_STORE_JSON_KEY_PATH"],
+      json_key: json_key,
     )
+  end
+
+  desc "Validate Play Store credentials without uploading anything"
+  lane :validate_play_connection do
+    json_key = ENV["PLAY_STORE_JSON_KEY_PATH"]
+    UI.user_error!("PLAY_STORE_JSON_KEY_PATH is not set. See scripts/setup-play-store.md for setup instructions.") if json_key.nil? || json_key.empty?
+    UI.user_error!("PLAY_STORE_JSON_KEY_PATH points to a missing file: #{json_key}") unless File.exist?(json_key)
+    upload_to_play_store(
+      validate_only: true,
+      json_key: json_key,
+    )
+    UI.success("Play Store credentials validated successfully.")
   end
 
   desc "Test, bump, build, and deploy to Play Store (internal track)"

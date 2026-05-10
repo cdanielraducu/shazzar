@@ -4,24 +4,23 @@
 CI/CD: Android release keystore setup
 
 ## What changed
-- `scripts/generate-keystore.sh` — new file (executable). Interactive keytool wrapper that generates a 4096-bit RSA keystore with configurable alias/password/org, performs a safety check to avoid overwriting an existing file, prompts for passwords with confirmation, and prints the complete base64-encode command, all four required GitHub Actions secret names and values, and local `~/.zshrc` export snippet.
-- `.github/workflows/ci.yml` — added `build-android` job. Runs on `main`-branch pushes only (guarded by `if: github.event_name == 'push' && github.ref == 'refs/heads/main'`). Depends on the existing `verify` job. Decodes `ANDROID_KEYSTORE_B64` secret to `/tmp/shazzar-release.keystore`, sets `ANDROID_KEYSTORE_PATH` in `$GITHUB_ENV`, then runs `bundle exec fastlane android build`. Uploads the AAB as an Actions artifact (14-day retention).
-- `README.md` — replaced the Phase 4 TODO line with a full 5-step Android signing setup guide (generate, base64-encode, set secrets, how CI uses it, local development). Kept the Google Play TODO as a separate note.
-- `PLAN.md` — moved "Add weekly habit recurrence to BootReceiver past-due advancement logic" (pre-existing, confirmed by PR #12) and "CI/CD: generate release keystore + configure Android signing env vars" from Active to Done with date 2026-05-10. Google Play task remains Active.
+- `scripts/generate-keystore.sh` (new, executable) — interactive `keytool` wrapper that generates a 4096-bit RSA keystore with configurable alias/password/org. Performs a safety check to avoid overwriting an existing file, prompts for passwords with confirmation, and prints the complete base64-encode commands, all four required GitHub Actions secret names, and a `~/.zshrc` export snippet for local development.
+- `scripts/ci-build-android-job.yml` (new) — the full `build-android` GitHub Actions job, ready to be pasted into `.github/workflows/ci.yml`. Stored here instead of directly in ci.yml because the PAT used by the overnight agent lacks the `workflow` scope required to push workflow file changes. **The human reviewer should copy this job into `.github/workflows/ci.yml` when ready.** The job: runs on main-push only, depends on `verify`, sets up Java 17 (Temurin), decodes `ANDROID_KEYSTORE_B64` secret to a temp file, runs `bundle exec fastlane android build`, uploads the AAB as a 14-day artifact.
+- `README.md` — replaced the Phase 4 TODO line with a full 5-step Android signing setup guide (generate, base64-encode, set secrets, how CI uses it, local development). Google Play TODO kept as a separate note.
+- `PLAN.md` — moved "Add weekly habit recurrence to BootReceiver past-due advancement logic" (pre-existing, confirmed by PR #12) and "CI/CD: generate release keystore + configure Android signing env vars" from Active to Done.
 
 ## What was hard
-Nothing structurally hard. The env var naming discrepancy between the Fastfile (`ANDROID_KEYSTORE_PATH`, `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) and the Gradle properties (`ANDROID_UPLOAD_STORE_FILE`, `ANDROID_UPLOAD_STORE_PASSWORD`, `ANDROID_UPLOAD_KEY_ALIAS`, `ANDROID_UPLOAD_KEY_PASSWORD`) was already handled correctly by the Fastfile `build` lane — it maps from one to the other. The Fastfile did not need any changes.
+- **PAT `workflow` scope**: the overnight agent's PAT does not have the `workflow` permission required to push `.github/workflows/` file changes. This prevented the `build-android` CI job from being merged directly. The job content is preserved in `scripts/ci-build-android-job.yml` for manual application.
+- **Env var naming discrepancy**: Fastfile uses `ANDROID_KEYSTORE_PATH` while Gradle expects `ANDROID_UPLOAD_STORE_FILE`. Already correctly mapped in the existing Fastfile `build` lane — no changes were needed there.
 
 ## What I found while implementing
-- The Fastfile's `build` lane already correctly maps env vars to Gradle properties — no changes needed there.
-- `.gitignore` already has `*.keystore` (except `!debug.keystore`) — the generated keystore is safe from accidental commits.
-- The existing `verify` Fastlane lane (which runs tests) is used for PRs. The `build-android` CI job correctly runs only on main-branch pushes after verify succeeds.
-- `ANDROID_KEYSTORE_B64` is the secret name chosen for the base64-encoded keystore (not `ANDROID_KEYSTORE_PATH`, which would be a local file path and unusable as a secret value).
+- `.gitignore` already has `*.keystore` and `!debug.keystore` — the generated keystore is protected from accidental commits.
+- `ANDROID_KEYSTORE_B64` is the secret name for the base64-encoded keystore, distinct from `ANDROID_KEYSTORE_PATH` (a local file path not suitable as a GitHub secret value).
 
 ## Open questions
-- The `build-android` CI job will be skipped silently if `ANDROID_KEYSTORE_B64` is not set yet (the decode step would fail with an empty string). Consider adding an explicit check or letting the first post-setup push validate it.
-- Keystore backup policy: the generated `.keystore` file should be stored in a password manager or encrypted drive. Losing it means the Play Store listing cannot be updated. This is a human responsibility — the script prints a warning but cannot enforce it.
-- `keystore.b64` is printed to stdout during setup; the user should delete it after pasting into GitHub Secrets — the script warns but does not clean up.
+- **PAT workflow scope**: to merge the ci.yml change, either grant the PAT `workflow` scope or apply the job content from `scripts/ci-build-android-job.yml` manually.
+- **Keystore backup**: the generated `.keystore` file should be stored in a password manager or encrypted drive. Losing it means the Play Store listing cannot receive updates.
+- **First upload**: Google Play requires the first AAB to be uploaded manually through Play Console before Fastlane can automate subsequent uploads.
 
 ## iOS stub status
-N/A — Android signing only. iOS code signing is deferred pending Apple Developer account. The Fastfile iOS `build` lane already has the appropriate stub and comment.
+N/A — Android signing only. iOS code signing deferred pending Apple Developer account.

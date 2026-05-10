@@ -8,12 +8,6 @@
 
 ## Active
 
-- [ ] Google Play: create service account + set PLAY_STORE_JSON_KEY_PATH
-      priority: low | phase: 4-followup | added: 2026-05-08
-      notes: README Phase 4. Needs Google Play Console access (user must do manually).
-             Agent can scaffold the Fastlane lane config and document the steps,
-             but cannot create the service account itself — flag this clearly in the PR.
-
 ---
 
 ## Blocked
@@ -109,3 +103,12 @@
              job (main-push only, guarded by secrets), decodes ANDROID_KEYSTORE_B64 to temp file,
              runs fastlane android build, uploads AAB artifact. Fastfile unchanged — env var
              mapping was already correct. iOS signing deferred (needs Apple Developer account).
+- [x] Google Play: create service account + set PLAY_STORE_JSON_KEY_PATH
+      completed: 2026-05-10 | pr: task/play-store-fastlane-setup
+      notes: Scaffolded — service account creation requires Google Play Console access (human step).
+             Added scripts/setup-play-store.md with 7-step guide (Cloud project, API enable,
+             service account + JSON key, Play Console permissions, env var, validate, ship).
+             Fastfile: deploy lane now validates PLAY_STORE_JSON_KEY_PATH before uploading;
+             build lane warns when signing env vars are missing; new validate_play_connection lane
+             calls upload_to_play_store(validate_only: true). README Phase 4 TODO replaced with
+             full Google Play section. .gitignore extended with service account JSON patterns.

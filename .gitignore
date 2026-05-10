@@ -64,3 +64,8 @@ yarn-error.log
 
 # testing
 /coverage
+
+# Google Play service account keys — never commit these
+*service-account*.json
+*play-store*.json
+*play_store*.json
