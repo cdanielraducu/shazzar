@@ -1,22 +1,26 @@
-# Nightly Report — 2026-05-09
+# Nightly Report — 2026-05-10
 
 ## Task
-BootReceiver weekly habit recurrence — unit test
+CI/CD: Android release keystore setup
 
 ## What changed
-- `android/app/build.gradle` — added `testImplementation` dependencies (JUnit 4.13.2, Robolectric 4.12.1, androidx.test:core 1.5.0, org.json 20231013) and `testOptions` block with `includeAndroidResources = true` and headless JVM arg.
-- `android/app/src/test/java/com/shazzar/modules/notifications/BootReceiverTest.kt` — new file; 4 Robolectric unit tests using real SharedPreferences via ApplicationProvider: weekly past-due advances by 7 days, daily past-due advances by 1 day, one-shot past-due is removed, future alarm is not modified.
-- `PLAN.md` — moved the weekly BootReceiver task from Active to Done.
+- `scripts/generate-keystore.sh` (new, executable) — interactive `keytool` wrapper that generates a 4096-bit RSA keystore with configurable alias/password/org. Performs a safety check to avoid overwriting an existing file, prompts for passwords with confirmation, and prints the complete base64-encode commands, all four required GitHub Actions secret names, and a `~/.zshrc` export snippet for local development.
+- `scripts/ci-build-android-job.yml` (new) — the full `build-android` GitHub Actions job, ready to be pasted into `.github/workflows/ci.yml`. Stored here instead of directly in ci.yml because the PAT used by the overnight agent lacks the `workflow` scope required to push workflow file changes. **The human reviewer should copy this job into `.github/workflows/ci.yml` when ready.** The job: runs on main-push only, depends on `verify`, sets up Java 17 (Temurin), decodes `ANDROID_KEYSTORE_B64` secret to a temp file, runs `bundle exec fastlane android build`, uploads the AAB as a 14-day artifact.
+- `README.md` — replaced the Phase 4 TODO line with a full 5-step Android signing setup guide (generate, base64-encode, set secrets, how CI uses it, local development). Google Play TODO kept as a separate note.
+- `PLAN.md` — moved "Add weekly habit recurrence to BootReceiver past-due advancement logic" (pre-existing, confirmed by PR #12) and "CI/CD: generate release keystore + configure Android signing env vars" from Active to Done.
 
 ## What was hard
-The sandbox environment has network access blocked to dl.google.com (403 Forbidden), which prevents Gradle from downloading the Android Gradle Plugin and other Maven artifacts. This made it impossible to actually execute `./gradlew test` and verify the tests pass at runtime. The tests are syntactically correct Kotlin and logically correct — they will pass in a real CI environment with network access and Android SDK available.
+- **PAT `workflow` scope**: the overnight agent's PAT does not have the `workflow` permission required to push `.github/workflows/` file changes. This prevented the `build-android` CI job from being merged directly. The job content is preserved in `scripts/ci-build-android-job.yml` for manual application.
+- **Env var naming discrepancy**: Fastfile uses `ANDROID_KEYSTORE_PATH` while Gradle expects `ANDROID_UPLOAD_STORE_FILE`. Already correctly mapped in the existing Fastfile `build` lane — no changes were needed there.
 
 ## What I found while implementing
-The weekly advancement logic (`val intervalDays = if (frequency == "weekly") 7 else 1`) was already fully implemented in BootReceiver.kt at line 37. The PLAN.md task was a followup specifically to add the unit test coverage, not to add the logic itself. The implementation uses a Calendar-based while-loop to advance past-due alarms to the next future occurrence, which correctly handles multiple missed intervals (e.g., if device was offline for 2+ weeks for a weekly alarm).
+- `.gitignore` already has `*.keystore` and `!debug.keystore` — the generated keystore is protected from accidental commits.
+- `ANDROID_KEYSTORE_B64` is the secret name for the base64-encoded keystore, distinct from `ANDROID_KEYSTORE_PATH` (a local file path not suitable as a GitHub secret value).
 
 ## Open questions
-- Gradle test execution in CI: The GitHub Actions workflow may also lack Android SDK setup. If the `test` task is not already part of the CI pipeline, it should be added after ensuring the Android SDK and Robolectric dependencies are available.
-- Robolectric SDK 33 compatibility: The test uses `@Config(sdk = [33])`. If the project's compileSdk differs, the config may need adjustment.
+- **PAT workflow scope**: to merge the ci.yml change, either grant the PAT `workflow` scope or apply the job content from `scripts/ci-build-android-job.yml` manually.
+- **Keystore backup**: the generated `.keystore` file should be stored in a password manager or encrypted drive. Losing it means the Play Store listing cannot receive updates.
+- **First upload**: Google Play requires the first AAB to be uploaded manually through Play Console before Fastlane can automate subsequent uploads.
 
 ## iOS stub status
-N/A — BootReceiver is Android-only. iOS uses UNCalendarNotificationTrigger with repeats: true, which the OS owns — no reboot-survival logic needed.
+N/A — Android signing only. iOS code signing deferred pending Apple Developer account.
