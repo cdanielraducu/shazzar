@@ -8,19 +8,6 @@
 
 ## Active
 
-- [ ] Add weekly habit recurrence to BootReceiver past-due advancement logic
-      priority: high | phase: 11-followup | added: 2026-05-08
-      notes: BootReceiver currently advances past-due alarms by 24h. Weekly habits need 7-day
-             advancement. Check `frequency` from SharedPreferences before computing next fire time.
-             Add a unit test covering the weekly case across a reboot boundary.
-
-- [ ] CI/CD: generate release keystore + configure Android signing env vars
-      priority: medium | phase: 4-followup | added: 2026-05-08
-      notes: README Phase 4 has the full TODO. Env vars needed:
-             `ANDROID_KEYSTORE_PATH`, `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`.
-             Base64-encode keystore for GitHub Actions secret. Document the steps taken in README.
-             Do not commit the keystore file. Android-only — iOS signing needs Apple Dev account.
-
 - [ ] Google Play: create service account + set PLAY_STORE_JSON_KEY_PATH
       priority: low | phase: 4-followup | added: 2026-05-08
       notes: README Phase 4. Needs Google Play Console access (user must do manually).
@@ -114,3 +101,11 @@
              Added Robolectric unit tests covering: weekly past-due (+7d), daily past-due (+1d),
              one-shot removal, and future alarm unchanged. Bootstrapped test infrastructure
              (testImplementation deps + testOptions in build.gradle).
+
+- [x] CI/CD: generate release keystore + configure Android signing env vars
+      completed: 2026-05-10 | pr: task/android-signing-setup
+      notes: scripts/generate-keystore.sh — interactive keytool wrapper, prints base64 and secret
+             names. README Phase 4 updated with full 5-step setup guide. ci.yml: new build-android
+             job (main-push only, guarded by secrets), decodes ANDROID_KEYSTORE_B64 to temp file,
+             runs fastlane android build, uploads AAB artifact. Fastfile unchanged — env var
+             mapping was already correct. iOS signing deferred (needs Apple Developer account).
