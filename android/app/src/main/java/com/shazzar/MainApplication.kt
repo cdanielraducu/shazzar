@@ -9,6 +9,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.shazzar.modules.deviceinfo.DeviceInfoPackage
 import com.shazzar.modules.haptics.HapticsPackage
 import com.shazzar.modules.health.HealthPackage
+import com.shazzar.modules.notifications.AppNotificationListenerPackage
 import com.shazzar.modules.notifications.NotificationPackage
 
 class MainApplication : Application(), ReactApplication {
@@ -22,6 +23,7 @@ class MainApplication : Application(), ReactApplication {
                     add(HapticsPackage())
                     add(HealthPackage())
                     add(NotificationPackage())
+                    add(AppNotificationListenerPackage())
                 },
         )
     }

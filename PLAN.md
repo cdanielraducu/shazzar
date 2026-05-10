@@ -99,3 +99,11 @@
              NotificationReceiver: steps handled via StepsFetchService; all other dataSource values
              fall through to static body — graceful. cancelNotification() cancels AlarmManager entry
              and removes from SharedPreferences atomically — no edge cases found.
+
+- [x] Implement NotificationListenerService for cross-app notification reading
+      completed: 2026-05-09 | pr: #TBD
+      notes: Android: AppNotificationListenerService (counts via SharedPreferences),
+             AppNotificationListenerModule (isEnabled/openSettings/getNotificationCount/clearNotificationCount + onAppNotification event),
+             AppNotificationListenerPackage. NotificationReceiver extended with whatsapp/instagram/telegram branch.
+             iOS: stub with TODO(ios) comments — cross-app notification access not permitted on iOS.
+             JS bridge: src/modules/AppNotifications/index.ts.

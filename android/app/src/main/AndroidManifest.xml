@@ -20,6 +20,10 @@
     <!-- Required to call startForegroundService() — needed for StepsFetchService -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!-- Grants Shazzar access to read notifications from other apps.
+         The user must grant this manually in Settings → Notification access. -->
+    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
+
     <!-- Health Connect library requires minSdk 26 but our app targets 21.
          We handle the API level check at runtime in HealthModule.kt —
          isAvailable() returns false on API < 26, all other methods reject early. -->
@@ -77,6 +81,18 @@
       <service
         android:name=".modules.notifications.StepsFetchService"
         android:exported="false" />
+
+      <!-- Listens to notifications from all installed apps when the user grants access
+           in Settings → Notification access.  The BIND_NOTIFICATION_LISTENER_SERVICE
+           permission ensures only the OS can bind to this service. -->
+      <service
+        android:name=".modules.notifications.AppNotificationListenerService"
+        android:exported="true"
+        android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+        <intent-filter>
+          <action android:name="android.service.notification.NotificationListenerService" />
+        </intent-filter>
+      </service>
 
       <!-- Receives FCM tokens and messages directly from the Firebase SDK -->
       <service
