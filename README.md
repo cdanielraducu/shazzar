@@ -54,8 +54,61 @@ Testing is baked into every phase (Jest unit tests + Appium E2E).
 - iOS: lane structure scaffolded, signing deferred (`match` needs Apple Developer account)
 - GitHub Actions integration
 - Build versioning, changelogs, environment secrets
-- TODO: generate release keystore and configure signing env vars (`ANDROID_KEYSTORE_PATH`, `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) — locally in `~/.zshrc` and as GitHub Actions secrets; base64-encode keystore for CI
-- TODO: create Google Play service account, download JSON key, set `PLAY_STORE_JSON_KEY_PATH` — locally and as a GitHub Actions secret
+
+#### Android Release Signing Setup
+
+**Step 1 — Generate the keystore (one-time, run locally):**
+
+```bash
+./scripts/generate-keystore.sh
+```
+
+The script uses `keytool` (bundled with any JDK). It prompts for passwords, generates `shazzar-release.keystore` in the repo root, and prints all subsequent steps. The file is already in `.gitignore` — never commit it.
+
+**Step 2 — Base64-encode the keystore for GitHub Actions:**
+
+```bash
+# Linux
+base64 -w 0 shazzar-release.keystore > keystore.b64
+
+# macOS
+base64 -i shazzar-release.keystore -o keystore.b64
+```
+
+**Step 3 — Add GitHub Actions secrets** (Settings → Secrets and variables → Actions):
+
+| Secret name | Value |
+|---|---|
+| `ANDROID_KEYSTORE_B64` | The full base64 string from `keystore.b64` |
+| `ANDROID_STORE_PASSWORD` | Keystore password chosen in Step 1 |
+| `ANDROID_KEY_ALIAS` | Key alias (default: `shazzar-key`) |
+| `ANDROID_KEY_PASSWORD` | Key password chosen in Step 1 |
+
+**Step 4 — How CI uses the keystore:**
+
+The `build-android` job in `.github/workflows/ci.yml` (runs on pushes to `main` only) decodes the base64 secret back to a temp file, sets `ANDROID_KEYSTORE_PATH` to that path, and then runs `bundle exec fastlane android build`. The Fastlane `build` lane passes those env vars as Gradle properties (`ANDROID_UPLOAD_STORE_FILE` etc.) which `android/app/build.gradle` consumes in its `signingConfigs.release` block.
+
+**Step 5 — Local development:**
+
+Add to `~/.zshrc` (or `~/.bashrc`) and run `source ~/.zshrc`:
+
+```bash
+export ANDROID_KEYSTORE_PATH="$HOME/shazzar-release.keystore"
+export ANDROID_STORE_PASSWORD="<your-keystore-password>"
+export ANDROID_KEY_ALIAS="shazzar-key"
+export ANDROID_KEY_PASSWORD="<your-key-password>"
+```
+
+Then build locally with: `bundle exec fastlane android build`
+
+#### Google Play Service Account Setup
+
+See [`scripts/setup-play-store.md`](scripts/setup-play-store.md) for the full step-by-step guide.
+
+- Environment variable required: `PLAY_STORE_JSON_KEY_PATH=/path/to/service-account-key.json`
+- **Never commit the JSON key file** — `.gitignore` already excludes `*service-account*.json` and `*play-store*.json` patterns
+- Validate credentials without uploading: `bundle exec fastlane android validate_play_connection`
+- Service account creation requires Google Play Console access — this is a human step that cannot be automated
 
 ### Phase 5 — Build Optimization ✅
 - Hermes engine (understand it, not just enable it)
